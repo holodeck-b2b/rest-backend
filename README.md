@@ -3,6 +3,12 @@ Is an extension for Holodeck B2B that implements the _Submit_, _Notify_ and _Del
 simplicity and since it's also a very common use-case this implementation only supports _User Messages_ with a single
 payload.
 
+__________________
+For more information on using Holodeck B2B visit http://holodeck-b2b.org  
+Lead developer: Sander Fieten  
+Code hosted at https://github.com/holodeck-b2b/hb2b-as2  
+Issue tracker https://github.com/holodeck-b2b/hb2b-as2/issues  
+
 ## API Specification
 The REST interface implemented by this extension uses the HTTP POST method to exchange the message meta-data and payload  
 with the message meta-data contained in the HTTP headers and the payload [of a *User Message*] in the HTTP entity body. The
@@ -47,12 +53,6 @@ support the use of multiple occurrences of a header for comma separated list val
 The HTTP status code in the range 2xx indicates that the operation was successful. All other codes should be interpreted as
 failure. On _Submission_ the extension adds an additional HTTP header _X-Error_ to the response that includes a (short)
 description why the submission was rejected.
-
-__________________
-For more information on using Holodeck B2B visit http://holodeck-b2b.org  
-Lead developer: Sander Fieten  
-Code hosted at https://github.com/holodeck-b2b/hb2b-as2  
-Issue tracker https://github.com/holodeck-b2b/hb2b-as2/issues  
 
 ## Installation
 ### Prerequisites  
