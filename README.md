@@ -84,8 +84,8 @@ Please document the steps to reproduce your problem in as much detail as you can
 Version numbering follows the [Semantic versioning](http://semver.org/) approach.
 
 ## License
-This module is licensed under the General Public License V3 (GPLv3) which is included in the LICENSE in the root of the project. 
-NOTE that this license only applies to the source code contained in this project and **does not apply to** the implementation of the REST API by **the backend system**.
+This module is licensed under the General Public License V3 (GPLv3) which is included in the LICENSE in the root of the project.  
+**NOTE** that this license only applies to the source code contained in this project and **does not apply to** the implementation of the REST API by **the backend system**.
 
 ## Support
 Commercial Holodeck B2B support is provided by Chasquis. Visit [Chasquis-Consulting.com](http://chasquis-consulting.com/holodeck-b2b-support/) for more information.
