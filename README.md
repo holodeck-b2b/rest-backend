@@ -15,7 +15,7 @@ The REST interface implemented by this extension uses the HTTP POST method to ex
 and base path»/notify/error` for _Error Signal Messages_.
 
 The table below shows the HTTP headers used to exchange the message meta-data. As the headers are, with exception of
- _Content-Type_, non standard header they are prefixed with {{X-HolodeckB2B-}}.
+ _Content-Type_, non standard they are prefixed with {{X-HolodeckB2B-}}.
 
 | Header suffix  | Contains       | Used in operations |
 | :------------- | :------------- | :----------------- |
