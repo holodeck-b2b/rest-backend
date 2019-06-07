@@ -1,7 +1,5 @@
 # Holodeck B2B REST back-end integration
-An extension for Holodeck B2B that implements the _Submit_, _Notify_ and _Deliver_ operations using a REST API. For
-simplicity and since it's also a very common use-case this implementation only supports _User Messages_ with a single
-payload.
+An extension for Holodeck B2B that implements the _Submit_, _Notify_ and _Deliver_ operations using a REST API. For simplicity and as it is a very common use-case this implementation only supports _User Messages_ with a single payload.
 
 __________________
 For more information on using Holodeck B2B visit http://holodeck-b2b.org  
