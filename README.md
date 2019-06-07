@@ -6,8 +6,8 @@ payload.
 __________________
 For more information on using Holodeck B2B visit http://holodeck-b2b.org  
 Lead developer: Sander Fieten  
-Code hosted at https://github.com/holodeck-b2b/hb2b-as2  
-Issue tracker https://github.com/holodeck-b2b/hb2b-as2/issues  
+Code hosted at https://github.com/holodeck-b2b/rest-backend  
+Issue tracker https://github.com/holodeck-b2b/rest-backend/issues  
 
 ## API Specification
 The REST interface implemented by this extension uses the HTTP POST method to exchange the message meta-data and payload  
