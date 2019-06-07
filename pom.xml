@@ -1,0 +1,136 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.holodeckb2b.extensions</groupId>
+	<artifactId>rest-backend</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<holodeckb2b.version>4.2.0-SNAPSHOT</holodeckb2b.version>
+		<axis2.version>1.7.7</axis2.version>
+	</properties>
+	<name>Holodeck B2B - REST back end</name>
+	<url>http://www.holodeck-b2b.org/</url>
+	<inceptionYear>2019</inceptionYear>
+	<description>
+        Is an extension for Holodeck B2B that implements the Submit, Notify and Deliver operations
+        using a REST API. For simplicity and as it's a very common use-case this implementation only
+        supports User Messages with a single payload.
+    </description>
+	<scm>
+		<url>https://github.com/holodeck-b2b/rest-backend</url>
+		<connection>scm:git:https://github.com/holodeck-b2b/rest-backend.git</connection>
+		<developerConnection>scm:git:git@github.com:holodeck-b2b/rest-backend.git</developerConnection>
+	</scm>
+	<issueManagement>
+		<url>https://github.com/holodeck-b2b/rest-backend/issues</url>
+	</issueManagement>
+
+	<organization>
+		<name>The Holodeck B2B Team</name>
+		<url>http://www.holodeck-b2b.org/team</url>
+	</organization>
+	<developers>
+		<developer>
+			<name>Sander Fieten</name>
+			<organization>Chasquis</organization>
+			<organizationUrl>http://chasquis-consulting.com/holodeck-b2b-support/</organizationUrl>
+			<email>sander at chasquis-consulting.com</email>
+			<roles>
+				<role>Architect</role>
+				<role>Lead developer</role>
+			</roles>
+			<timezone>Europe/Amsterdam</timezone>
+		</developer>
+		<developer>
+			<name>Renate Slebe</name>
+			<organization>Chasquis</organization>
+			<organizationUrl>http://chasquis-consulting.com/holodeck-b2b-support/</organizationUrl>
+			<email>renate at chasquis-consulting.com</email>
+			<roles>
+				<role>Product manager</role>
+				<role>QA and documentation</role>
+			</roles>
+			<timezone>Europe/Amsterdam</timezone>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU General Public License v3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+		</license>
+	</licenses>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.holodeckb2b</groupId>
+			<artifactId>holodeckb2b-interfaces</artifactId>
+			<version>${holodeckb2b.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.holodeckb2b</groupId>
+			<artifactId>holodeckb2b-common</artifactId>
+			<version>${holodeckb2b.version}</version>
+		</dependency>
+		<!-- Logging NOTE: As log4j is also used by HB2B itself the versions used 
+			should be the same -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.6.2</version>
+			<scope>provided</scope>
+		</dependency>		
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.4.2</version>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>org.holodeckb2b</groupId>
+            <artifactId>holodeckb2b-common</artifactId>
+            <version>${holodeckb2b.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>		
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>        
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.axis2</groupId>
+				<artifactId>axis2-aar-maven-plugin</artifactId>
+				<version>${axis2.version}</version>
+				<configuration>
+					<primaryArtifact>false</primaryArtifact>
+					<servicesXmlFile>src/main/resources/rest-backend-service.xml</servicesXmlFile>
+					<aarName>hb2b-rest-backend</aarName>
+					<includeDependencies>false</includeDependencies>
+					<!-- The classDirectory parameter is set to a non existing directory 
+						to prevent the plugin from adding the project classes to the aar -->
+					<classesDirectory>no_classes</classesDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>create-rest-backend-service</id>
+						<phase>package</phase>
+						<goals>
+							<goal>aar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
