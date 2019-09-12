@@ -1,19 +1,21 @@
 # Holodeck B2B REST back-end integration
-Is an extension for Holodeck B2B that implements the _Submit_, _Notify_ and _Deliver_ operations using a REST API. For
-simplicity and since it's also a very common use-case this implementation only supports _User Messages_ with a single
-payload.
+An extension for Holodeck B2B that implements the _Submit_, _Notify_ and _Deliver_ operations using a REST API. For simplicity and as it is a very common use-case this implementation only supports _User Messages_ with a single payload.
+
+__________________
+For more information on using Holodeck B2B visit http://holodeck-b2b.org  
+Lead developer: Sander Fieten  
+Code hosted at https://github.com/holodeck-b2b/rest-backend  
+Issue tracker https://github.com/holodeck-b2b/rest-backend/issues  
 
 ## API Specification
-The REST interface implemented by this extension uses the HTTP POST method to exchange the message meta-data and payload  
-with the message meta-data contained in the HTTP headers and the payload [of a *User Message*] in the HTTP entity body. The
-following URL context paths are used for the operations:
+The REST interface implemented by this extension uses the HTTP POST method to exchange the message meta-data and payload with the message meta-data contained in the HTTP headers and the payload [of a *User Message*] in the HTTP entity body. The following URL context paths are used for the operations:
 * Submit : `http://«holodeckb2b-host»/holodeckb2b/restbackend/submit`
 * Delivery : `http://«back-end host and base path»/deliver`
 * Notify : `http://«back-end host and base path»/notify/receipt` for _Receipt Signal Messages_ and `http://«back-end host
 and base path»/notify/error` for _Error Signal Messages_.
 
 The table below shows the HTTP headers used to exchange the message meta-data. As the headers are, with exception of
- _Content-Type_, non standard header they are prefixed with {{X-HolodeckB2B-}}.
+ _Content-Type_, non standard they are prefixed with {{X-HolodeckB2B-}}.
 
 | Header suffix  | Contains       | Used in operations |
 | :------------- | :------------- | :----------------- |
@@ -48,12 +50,6 @@ The HTTP status code in the range 2xx indicates that the operation was successfu
 failure. On _Submission_ the extension adds an additional HTTP header _X-Error_ to the response that includes a (short)
 description why the submission was rejected.
 
-__________________
-For more information on using Holodeck B2B visit http://holodeck-b2b.org  
-Lead developer: Sander Fieten  
-Code hosted at https://github.com/holodeck-b2b/hb2b-as2  
-Issue tracker https://github.com/holodeck-b2b/hb2b-as2/issues  
-
 ## Installation
 ### Prerequisites  
 This extension requires that you have already deployed Holodeck B2B version 4.2.0 or later and the [*"rest-no-error-content"* Axis2 module](https://github.com/holodeck-b2b/axis2-rest-status-only-error).
@@ -86,8 +82,8 @@ Please document the steps to reproduce your problem in as much detail as you can
 Version numbering follows the [Semantic versioning](http://semver.org/) approach.
 
 ## License
-This module is licensed under the General Public License V3 (GPLv3) which is included in the LICENSE in the root of the project. NOTE that this
-license only applies to the source code contained in this project and **does not apply to** the implementation of the REST API by **the backend system**.
+This module is licensed under the General Public License V3 (GPLv3) which is included in the LICENSE in the root of the project.  
+**NOTE** that this license only applies to the source code contained in this project and **does not apply to** the implementation of the REST API by **the backend system**.
 
 ## Support
 Commercial Holodeck B2B support is provided by Chasquis. Visit [Chasquis-Consulting.com](http://chasquis-consulting.com/holodeck-b2b-support/) for more information.
