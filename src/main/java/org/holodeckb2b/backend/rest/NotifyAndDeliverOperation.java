@@ -179,9 +179,13 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
 	            
 	            log.debug("Sending User Message to back-end at {}", baseURL);
 	        	con.connect();
-	            if (con.getResponseCode() / 200 != 1)
-	            	throw new IOException("Back-end refused delivery! HTTP error= " 
-	            													+ con.getResponseCode() + con.getResponseMessage());
+	        	int responseCode = con.getResponseCode();
+	        	String responseMsg = con.getResponseMessage();
+	        	con.disconnect();
+	            if (responseCode / 200 != 1)
+	            	throw new IOException("Back-end refused delivery! HTTP error= " + responseCode + "/" + responseMsg);
+	            else 
+	            	log.info("Successful delivered payload of message [msgId={}] to back-end", userMsg.getMessageId());
             } catch (IOException conError) {
             	log.error("Error in delivery of User Message [msgId={}]. Error details: {}", userMsg.getMessageId(),
             				conError.getMessage());
@@ -219,11 +223,17 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
 	            
 	            log.debug("Sending {} to back-end at {}", MessageUnitUtils.getMessageUnitName(signal) ,targetURL);
 	        	con.connect();
-	            if (con.getResponseCode() / 200 != 1)
-	            	throw new IOException("Back-end refused notification! HTTP error= " 
-	            													+ con.getResponseCode() + con.getResponseMessage());
+	        	int responseCode = con.getResponseCode();
+	        	String responseMsg = con.getResponseMessage();
+	        	con.disconnect();
+	            if (responseCode / 200 != 1)
+	            	throw new IOException("Back-end refused notification! HTTP error= " + responseCode 
+	            																		+ "/" + responseMsg);
+	            else 
+	            	log.info("Successful notified {} [msgId={}] to back-end", 
+	            				MessageUnitUtils.getMessageUnitName(signal), signal.getMessageId());	            
             } catch (IOException conError) {
-            	log.error("Error in delivery of {} [msgId={}]. Error details: {}", 
+            	log.error("Error in notification of {} [msgId={}]. Error details: {}", 
             				MessageUnitUtils.getMessageUnitName(signal), signal.getMessageId(), conError.getMessage());
             	throw new MessageDeliveryException("Error in notification to back-end", conError);
             }	
