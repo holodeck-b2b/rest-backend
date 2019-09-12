@@ -23,7 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -163,7 +165,21 @@ class DeliveryOperationTest {
 		
 		assertEquals(schemaInfo.getLocation(), headers.getHeader(HTTPHeaders.SCHEMA_LOCATION));
 		assertEquals(schemaInfo.getVersion(), headers.getHeader(HTTPHeaders.SCHEMA_VERSION));
-		assertEquals(schemaInfo.getNamespace(), headers.getHeader(HTTPHeaders.SCHEMA_NS));		
+		assertEquals(schemaInfo.getNamespace(), headers.getHeader(HTTPHeaders.SCHEMA_NS));
+		
+		boolean equal = false;
+		try (FileInputStream org = new FileInputStream(plData); 
+			 ByteArrayInputStream sav = new ByteArrayInputStream(backend.getRcvdData())) {
+			int o, s;
+			do {
+				o = org.read(); s = sav.read();
+				equal = o == s;
+			} while (equal && o > 0 && s > 0);
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+		assertTrue(equal);	
 	}
 	
 	

@@ -111,7 +111,7 @@ class SubmitOperationTest {
 		final Path saved = Paths.get(payload.getContentLocation());
 		assertTrue(Files.exists(saved));
 		
-		boolean equal = true;
+		boolean equal = false;
 		try (FileInputStream org = new FileInputStream(submittedPayload); 
 			 FileInputStream sav = new FileInputStream(saved.toFile())) {
 			int o, s;
