@@ -11,7 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<holodeckb2b.version>4.2.0-SNAPSHOT</holodeckb2b.version>
+		<holodeckb2b.version>5.0.0-SNAPSHOT</holodeckb2b.version>
 		<axis2.version>1.7.7</axis2.version>
 	</properties>
 	<name>Holodeck B2B - REST back end</name>
@@ -74,7 +74,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.holodeckb2b</groupId>
-			<artifactId>holodeckb2b-common</artifactId>
+			<artifactId>holodeckb2b-core</artifactId>
 			<version>${holodeckb2b.version}</version>
 		</dependency>
 		<!-- Logging NOTE: As log4j is also used by HB2B itself the versions used 
@@ -93,7 +93,7 @@
 		</dependency>
         <dependency>
             <groupId>org.holodeckb2b</groupId>
-            <artifactId>holodeckb2b-common</artifactId>
+            <artifactId>holodeckb2b-core</artifactId>
             <version>${holodeckb2b.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
