@@ -20,7 +20,7 @@ The table below shows the HTTP headers used to exchange the message meta-data. A
 | SenderRole | The Role of the Sender of the _User Message_. | Submit and Delivery |
 | ReceiverId | The PartyId<sup>*</sup> of the Receiver of the _User Message_. | Submit and Delivery |
 | ReceiverRole | The Role of the Receiver of the _User Message_. | Submit and Delivery |
-| MessageProperties | Comma separated list of the <i>Message Properties</i> of the _User Message_. Each property is formatted as _`name`_ `"=" [ "["`_`type`_`"]" ]`_`value`_ with the type part being optional. | Submit and Delivery |
+| MessageProperties | Comma separated list of the <i>Message Properties</i> of the _User Message_. Each property is formatted as _`name`_`"=" [ "["`_`type`_`"]" ]`_`value`_ with the type part being optional. | Submit and Delivery |
 | ConversationId | The ConversationId contained in the User Message. | Submit and Delivery |
 | Service | The Service used by the _User Message_. Formatted as `[ "["`_`type`_`"]"  ] `_`name`_ | Submit and Delivery |
 | Action | The Action used by the _User Message_. | Submit and Delivery |
