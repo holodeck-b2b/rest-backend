@@ -222,8 +222,8 @@ public class SubmitOperation extends AbstractMessageReceiver {
 	 * @throws IOException	If the payload data cannot be saved to file.
 	 */
 	private String createPayloadFile(final MessageContext msgCtx) throws IOException {
-		final Path tmpStorageDir =  Paths.get(HolodeckB2BCoreInterface.getConfiguration().getTempDirectory(), 
-												 "hb2b-rest-submit");
+		final Path tmpStorageDir =  HolodeckB2BCoreInterface.getConfiguration().getTempDirectory()
+																						.resolve("hb2b-rest-submit");
 		log.trace("Check {} is available for temporary storage of submitted payloads.", tmpStorageDir); 
 		if (!Files.exists(tmpStorageDir)) {
 			log.debug("Temp directory for storing submitted payloads does not exist, creating it now");

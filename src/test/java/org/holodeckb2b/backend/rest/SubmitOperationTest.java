@@ -30,10 +30,10 @@ import org.holodeckb2b.common.axis2.NOPMessageBuilder;
 import org.holodeckb2b.common.messagemodel.PartyId;
 import org.holodeckb2b.common.messagemodel.Property;
 import org.holodeckb2b.common.messagemodel.Service;
-import org.holodeckb2b.common.messagemodel.util.CompareUtils;
 import org.holodeckb2b.common.testhelpers.HolodeckB2BTestCore;
 import org.holodeckb2b.common.testhelpers.Submitter;
 import org.holodeckb2b.common.testhelpers.TestUtils;
+import org.holodeckb2b.common.util.CompareUtils;
 import org.holodeckb2b.common.util.Utils;
 import org.holodeckb2b.interfaces.core.HolodeckB2BCoreInterface;
 import org.holodeckb2b.interfaces.general.IProperty;
@@ -74,7 +74,7 @@ class SubmitOperationTest {
 	void testPayloadSave(String payloadFile) {
 		final String pmodeId = "pm-test-rest";
 
-		final String submittedPayload = TestUtils.getPath("payloads/" + payloadFile);
+		final String submittedPayload = TestUtils.getPath("payloads/").resolve(payloadFile).toString();
 		String mimeType;
 		try {
 			mimeType = Utils.detectMimeType(new File(submittedPayload));
@@ -145,7 +145,7 @@ class SubmitOperationTest {
 	void testStreamClosure() {	
 		final String pmodeId = "pm-test-rest";
 
-		final String submittedPayload = TestUtils.getPath("payloads/test.xml");
+		final String submittedPayload = TestUtils.getPath("payloads/test.xml").toString();
 		final String mimeType = "application/xml";			
 		
 		final HashMap<String, String> headers = new HashMap<>();
@@ -187,7 +187,7 @@ class SubmitOperationTest {
 																			  new Property("mp2", "val2", "t1")																				
 																			});
 		
-		final String plData = TestUtils.getPath("payloads/test.xml");
+		final String plData = TestUtils.getPath("payloads/test.xml").toString();
 		final String plMimeType = "application/xml";		
 		final Containment plContainment = Containment.BODY;
 		

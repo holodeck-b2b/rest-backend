@@ -44,8 +44,8 @@ import org.holodeckb2b.common.messagemodel.SchemaReference;
 import org.holodeckb2b.common.messagemodel.Service;
 import org.holodeckb2b.common.messagemodel.TradingPartner;
 import org.holodeckb2b.common.messagemodel.UserMessage;
-import org.holodeckb2b.common.messagemodel.util.CompareUtils;
 import org.holodeckb2b.common.testhelpers.TestUtils;
+import org.holodeckb2b.common.util.CompareUtils;
 import org.holodeckb2b.common.util.Utils;
 import org.holodeckb2b.interfaces.delivery.MessageDeliveryException;
 import org.holodeckb2b.interfaces.general.IProperty;
@@ -73,7 +73,7 @@ class DeliveryOperationTest {
 	@ParameterizedTest
 	@ValueSource(strings = { "test.xml", "logo.png", "random.bin" })
 	void testDeliveryOkay(String payloadFile) throws Exception {
-		final String plData = TestUtils.getPath("payloads/" + payloadFile);
+		final String plData = TestUtils.getPath("payloads/").resolve(payloadFile).toString();
 		String mimeType;
 		try {
 			mimeType = Utils.detectMimeType(new File(plData));
@@ -274,7 +274,7 @@ class DeliveryOperationTest {
 		userMsg.setCollaborationInfo(cInfo);
 
 		Payload payload = new Payload();
-		payload.setContentLocation(TestUtils.getPath("payloads/test.xml"));
+		payload.setContentLocation(TestUtils.getPath("payloads/test.xml").toString());
 		payload.setMimeType("text/xml");		
 		
 		NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
@@ -313,7 +313,7 @@ class DeliveryOperationTest {
 		userMsg.setCollaborationInfo(cInfo);
 
 		Payload payload = new Payload();
-		payload.setContentLocation(TestUtils.getPath("payloads/test.xml"));
+		payload.setContentLocation(TestUtils.getPath("payloads/test.xml").toString());
 		payload.setMimeType("text/xml");		
 		
 		NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
