@@ -12,7 +12,7 @@ Issue tracker https://github.com/holodeck-b2b/rest-backend/issues
 This extension requires that you have already deployed Holodeck B2B version 5.0.0 or later and the [*"rest-no-error-content"* Axis2 module](https://github.com/holodeck-b2b/axis2-rest-status-only-error).
 
 ### Installation and Configuration
-First step is to build the extension or download the latest release package. You should now have the `rest-backend-«version».jar` and `hb2b-rest-backend.aar` files available. Copy the jar file to the `lib` directory of the Holodeck B2B instance and copy the aar file to the `repository/services` directory to enable the REST interface in the Holodeck B2B instance. Please note that you cannot activate the extension in a running Holodeck B2B instance and will need to restart the server to activate the REST extension.
+First step is to build the extension or download the latest release. You should now have the `rest-backend-«version».jar` and `hb2b-rest-backend.aar` files available. Copy the jar file to the `lib` directory of the Holodeck B2B instance and copy the aar file to the `repository/services` directory to enable the REST interface in the Holodeck B2B instance. Please note that you cannot activate the extension in a running Holodeck B2B instance and will need to restart the server to activate the REST extension.
 
 No additional configuration is needed for the _Submit_ operation. The _Delivery_ and _Notify_ operations are configured in the
 P-Modes by setting the _delivery method_. To use this REST back-end integration set the applicable `DeliveryMethod` element to `org.holodeckb2b.backend.rest.NotifyAndDeliverOperation` and configure its parameters:
