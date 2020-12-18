@@ -25,7 +25,6 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.commons.io.FileUtils;
 import org.holodeckb2b.common.axis2.NOPMessageBuilder;
 import org.holodeckb2b.common.messagemodel.PartyId;
 import org.holodeckb2b.common.messagemodel.Property;
@@ -34,7 +33,8 @@ import org.holodeckb2b.common.testhelpers.HolodeckB2BTestCore;
 import org.holodeckb2b.common.testhelpers.Submitter;
 import org.holodeckb2b.common.testhelpers.TestUtils;
 import org.holodeckb2b.common.util.CompareUtils;
-import org.holodeckb2b.common.util.Utils;
+import org.holodeckb2b.commons.util.FileUtils;
+import org.holodeckb2b.commons.util.Utils;
 import org.holodeckb2b.interfaces.core.HolodeckB2BCoreInterface;
 import org.holodeckb2b.interfaces.general.IProperty;
 import org.holodeckb2b.interfaces.general.ISchemaReference;
@@ -55,10 +55,10 @@ class SubmitOperationTest {
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		final File hb2bHome = new File(TestUtils.getPath(".") + File.pathSeparator + "hb2b-home" );
-		if (hb2bHome.exists())
-			FileUtils.deleteDirectory(hb2bHome);		
-		FileUtils.forceMkdir(hb2bHome);
+		final Path hb2bHome = TestUtils.getPath(".").resolve("hb2b-home");
+		if (Files.exists(hb2bHome))
+				FileUtils.removeDirectory(hb2bHome);		
+		Files.createDirectories(hb2bHome);
 		
 		testCore = new HolodeckB2BTestCore(hb2bHome.toString());
 		HolodeckB2BCoreInterface.setImplementation(testCore);
@@ -77,7 +77,7 @@ class SubmitOperationTest {
 		final String submittedPayload = TestUtils.getPath("payloads/").resolve(payloadFile).toString();
 		String mimeType;
 		try {
-			mimeType = Utils.detectMimeType(new File(submittedPayload));
+			mimeType = FileUtils.detectMimeType(new File(submittedPayload));
 		} catch (IOException e1) {
 			mimeType = "application/octet-stream";			
 		}

@@ -46,7 +46,8 @@ import org.holodeckb2b.common.messagemodel.TradingPartner;
 import org.holodeckb2b.common.messagemodel.UserMessage;
 import org.holodeckb2b.common.testhelpers.TestUtils;
 import org.holodeckb2b.common.util.CompareUtils;
-import org.holodeckb2b.common.util.Utils;
+import org.holodeckb2b.commons.util.FileUtils;
+import org.holodeckb2b.commons.util.Utils;
 import org.holodeckb2b.interfaces.delivery.MessageDeliveryException;
 import org.holodeckb2b.interfaces.general.IProperty;
 import org.junit.jupiter.api.AfterAll;
@@ -76,7 +77,7 @@ class DeliveryOperationTest {
 		final String plData = TestUtils.getPath("payloads/").resolve(payloadFile).toString();
 		String mimeType;
 		try {
-			mimeType = Utils.detectMimeType(new File(plData));
+			mimeType = FileUtils.detectMimeType(new File(plData));
 		} catch (IOException e1) {
 			mimeType = "application/octet-stream";			
 		}

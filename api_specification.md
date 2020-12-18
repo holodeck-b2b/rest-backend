@@ -16,9 +16,9 @@ The table below shows the HTTP headers used to exchange the message meta-data. A
 | MessageId | The _MessageId_ of the message | All |
 | Timestamp | The time stamp of the message | All |
 | RefToMessageId | The _RefToMessageId_ contained in the message. | All |
-| SenderId | The PartyId<sup>*</sup> of the Sender of the _User Message_. | Submit and Delivery |
+| SenderId | The PartyId of the Sender of the _User Message_. Formatted as `[ "["`_`type`_`"]"  ] `_`identifier`_ | Submit and Delivery |
 | SenderRole | The Role of the Sender of the _User Message_. | Submit and Delivery |
-| ReceiverId | The PartyId<sup>*</sup> of the Receiver of the _User Message_. | Submit and Delivery |
+| ReceiverId | The PartyId of the Receiver of the _User Message_. Formatted as `[ "["`_`type`_`"]"  ] `_`identifier`_| Submit and Delivery |
 | ReceiverRole | The Role of the Receiver of the _User Message_. | Submit and Delivery |
 | MessageProperties | Comma separated list of the <i>Message Properties</i> of the _User Message_. Each property is formatted as _`name`_`"=" [ "["`_`type`_`"]" ]`_`value`_ with the type part being optional. | Submit and Delivery |
 | ConversationId | The ConversationId contained in the User Message. | Submit and Delivery |
