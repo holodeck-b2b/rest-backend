@@ -31,7 +31,7 @@ import java.util.Iterator;
 import org.holodeckb2b.common.messagemodel.EbmsError;
 import org.holodeckb2b.common.messagemodel.PartyId;
 import org.holodeckb2b.common.messagemodel.Property;
-import org.holodeckb2b.common.util.Utils;
+import org.holodeckb2b.commons.util.Utils;
 import org.holodeckb2b.interfaces.general.IPartyId;
 import org.holodeckb2b.interfaces.general.IProperty;
 import org.holodeckb2b.interfaces.messagemodel.IEbmsError;
