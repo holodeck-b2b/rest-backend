@@ -165,7 +165,7 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
 	            final String targetURL = baseURL + "deliver";
 	            HttpURLConnection con = (HttpURLConnection) new URL(targetURL).openConnection();
 	            con.setRequestMethod("POST");
-	            con.setDoOutput(payload != null);
+	            con.setDoOutput(true);
 	            con.setDoInput(true);
 	            con.setConnectTimeout(timeout); 
 	            con.setReadTimeout(timeout); 
