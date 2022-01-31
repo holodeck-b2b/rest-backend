@@ -169,18 +169,20 @@ class DeliveryOperationTest {
 		assertEquals(schemaInfo.getNamespace(), headers.getHeader(HTTPHeaders.SCHEMA_NS));
 		
 		boolean equal = false;
+		int l = 0;
 		try (FileInputStream org = new FileInputStream(plData); 
 			 ByteArrayInputStream sav = new ByteArrayInputStream(backend.getRcvdData())) {
 			int o, s;
 			do {
-				o = org.read(); s = sav.read();
+				o = org.read(); s = sav.read(); l += (s >= 0) ? 1 : 0;
 				equal = o == s;
-			} while (equal && o > 0 && s > 0);
+			} while (equal && o >= 0 && s >= 0);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}
 		assertTrue(equal);	
+		assertEquals(l, Integer.parseInt(headers.getHeader("content-length")));
 	}
 	
 	
@@ -241,7 +243,7 @@ class DeliveryOperationTest {
 		assertTrue(Utils.isNullOrEmpty(msgProperties));
 		
 		assertNull(backend.getRcvdData());
-		assertNull(headers.getHeader(HTTPHeaders.MIME_TYPE));
+		assertTrue(Utils.isNullOrEmpty(headers.getHeader(HTTPHeaders.MIME_TYPE)));
 		Collection<IProperty> plProperties = headers.getProperties(HTTPHeaders.PART_PROPS);
 		assertTrue(Utils.isNullOrEmpty(plProperties));
 		
