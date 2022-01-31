@@ -174,8 +174,10 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
 		            try (FileInputStream fis = new FileInputStream(payload.getContentLocation())) {
 						Streams.copy(fis, con.getOutputStream(), true);
 					}
-	            } else
+	            } else {
 	            	log.debug("User Message does not have payload, send empty entity body");
+	            	con.setFixedLengthStreamingMode(0);
+	            }
 	            
 	            log.debug("Sending User Message to back-end at {}", baseURL);
 	        	con.connect();
