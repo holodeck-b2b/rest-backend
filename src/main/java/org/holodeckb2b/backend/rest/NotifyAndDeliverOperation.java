@@ -143,6 +143,7 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
     		headers.setHeader(HTTPHeaders.SENDER_ROLE, userMsg.getSender().getRole());
     		headers.setPartyId(HTTPHeaders.RECEIVER_PARTY_ID, userMsg.getReceiver().getPartyIds().iterator().next());
     		headers.setHeader(HTTPHeaders.RECEIVER_ROLE, userMsg.getReceiver().getRole());
+    		headers.setProperties(HTTPHeaders.MESSAGE_PROPS, userMsg.getMessageProperties());
     		ICollaborationInfo ci = userMsg.getCollaborationInfo();
     		if (ci != null) {
     		   headers.setHeader(HTTPHeaders.CONVERSATION_ID, ci.getConversationId());
@@ -158,7 +159,7 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
 		    		headers.setHeader(HTTPHeaders.SCHEMA_VERSION, plSchemaInfo.getVersion());
 		    		headers.setHeader(HTTPHeaders.SCHEMA_NS, plSchemaInfo.getNamespace());
 	            }
-    		}
+    		} 
 
             try {
 	            log.debug("Preparing connection to back-end");	       
@@ -179,7 +180,9 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
 	            } else {
 	            	log.debug("User Message does not have payload, send empty entity body");
 	            	con.setFixedLengthStreamingMode(0);
+	            	con.setRequestProperty(HTTPHeaders.MIME_TYPE, "");
 	            }
+	           
 	            
 	            log.debug("Sending User Message to back-end at {}", baseURL);
 	        	con.connect();
