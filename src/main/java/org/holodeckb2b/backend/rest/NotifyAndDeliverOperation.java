@@ -33,6 +33,7 @@ import org.holodeckb2b.interfaces.delivery.IMessageDeliverer;
 import org.holodeckb2b.interfaces.delivery.IMessageDelivererFactory;
 import org.holodeckb2b.interfaces.delivery.MessageDeliveryException;
 import org.holodeckb2b.interfaces.general.ISchemaReference;
+import org.holodeckb2b.interfaces.messagemodel.ICollaborationInfo;
 import org.holodeckb2b.interfaces.messagemodel.IErrorMessage;
 import org.holodeckb2b.interfaces.messagemodel.IMessageUnit;
 import org.holodeckb2b.interfaces.messagemodel.IPayload;
@@ -142,11 +143,12 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
     		headers.setHeader(HTTPHeaders.SENDER_ROLE, userMsg.getSender().getRole());
     		headers.setPartyId(HTTPHeaders.RECEIVER_PARTY_ID, userMsg.getReceiver().getPartyIds().iterator().next());
     		headers.setHeader(HTTPHeaders.RECEIVER_ROLE, userMsg.getReceiver().getRole());
-    		headers.setHeader(HTTPHeaders.CONVERSATION_ID, userMsg.getCollaborationInfo().getConversationId());
-    		headers.setServiceHeader(userMsg.getCollaborationInfo().getService());
-    		headers.setHeader(HTTPHeaders.ACTION, userMsg.getCollaborationInfo().getAction());
-    		headers.setProperties(HTTPHeaders.MESSAGE_PROPS, userMsg.getMessageProperties());
-    		
+    		ICollaborationInfo ci = userMsg.getCollaborationInfo();
+    		if (ci != null) {
+    		   headers.setHeader(HTTPHeaders.CONVERSATION_ID, ci.getConversationId());
+    		   headers.setServiceHeader(ci.getService());
+    		   headers.setHeader(HTTPHeaders.ACTION, ci.getAction());
+    		}    		
     		if (payload != null) {	    				    
 	    		headers.setHeader(HTTPHeaders.MIME_TYPE, payload.getMimeType());
 	    		headers.setProperties(HTTPHeaders.PART_PROPS, payload.getProperties());            
