@@ -5,7 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## 1.1.1
 ##### 2022-01-31
 ### Changed
-* Added _Content-Length_ http header in Notification requests for better interoperability 
+* Added _Content-Length_ http header in Notification and Delivery without payloads requests for better interoperability 
+
+### Fixed
+* Issue on delivery of messages using a messaging protocol that has no support for Collaboration Info meta-data [#9](https://github.com/holodeck-b2b/rest-backend/issues/9)
 
 ## 1.1.0
 ##### 2021-12-14
