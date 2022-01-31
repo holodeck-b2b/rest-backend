@@ -215,10 +215,11 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
 	            final String targetURL = baseURL + "notify/" + (signal instanceof IReceipt ? "receipt" : "error");
 	            HttpURLConnection con = (HttpURLConnection) new URL(targetURL).openConnection();
 	            con.setRequestMethod("POST");
-	            con.setDoOutput(false);
+	            con.setDoOutput(true);
+	            con.setFixedLengthStreamingMode(0);
 	            con.setDoInput(true);
 	            con.setConnectTimeout(timeout); 
-	            con.setReadTimeout(timeout); 
+	            con.setReadTimeout(timeout);
 	            headers.getAllHeaders().forEach((n, v) -> con.setRequestProperty(n, v));
 	            
 	            log.debug("Sending {} to back-end at {}", MessageUnitUtils.getMessageUnitName(signal) ,targetURL);

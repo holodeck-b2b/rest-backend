@@ -77,6 +77,7 @@ class NotifyOperationTest {
 		
 		HTTPHeaders headers = backend.getRcvdHeaders();		
 		assertNotNull(headers);
+		assertEquals("0", headers.getHeader("Content-Length"));
 		assertEquals(receipt.getPModeId(), headers.getHeader(HTTPHeaders.PMODE_ID));
 		assertEquals(receipt.getMessageId(), headers.getHeader(HTTPHeaders.MESSAGE_ID));
 		assertEquals(receipt.getTimestamp(), Utils.fromXMLDateTime(headers.getHeader(HTTPHeaders.TIMESTAMP)));
@@ -117,6 +118,7 @@ class NotifyOperationTest {
 		
 		HTTPHeaders headers = backend.getRcvdHeaders();		
 		assertNotNull(headers);
+		assertEquals("0", headers.getHeader("Content-Length"));
 		assertEquals(errMsg.getPModeId(), headers.getHeader(HTTPHeaders.PMODE_ID));
 		assertEquals(errMsg.getMessageId(), headers.getHeader(HTTPHeaders.MESSAGE_ID));
 		assertEquals(errMsg.getTimestamp(), Utils.fromXMLDateTime(headers.getHeader(HTTPHeaders.TIMESTAMP)));
