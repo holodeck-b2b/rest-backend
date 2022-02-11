@@ -207,6 +207,10 @@ public class SubmitOperation extends AbstractMessageReceiver {
 			payload.setSchemaReference(schemaInfo);
 		}
 		
+		final String payloadURI = headers.getHeader(HTTPHeaders.PAYLOAD_URI);
+		if (!Utils.isNullOrEmpty(payloadURI))
+			payload.setPayloadURI(payloadURI);
+
 		return payload;
 	}
 

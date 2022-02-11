@@ -125,7 +125,10 @@ public class HTTPHeaders {
 	 * ebMS Errors.   
 	 */
 	public static final String ERROR_MESSAGE = "X-HolodeckB2B-Errors";
-	
+	/**
+	 * The uri of the payload - Only used in <i>Submit</i> operation. Optional.
+	 */
+	public static final String PAYLOAD_URI = "X-HolodeckB2B-Payload-URI";
 	
 	private final HashMap<String, String> headers = new HashMap<>();
 	
