@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.0
+##### 2022-09-21
+### Added
+* Support for setting the value of the Content-Id of the attachment that contains the payload
+
 ## 1.1.1
 ##### 2022-01-31
 ### Changed

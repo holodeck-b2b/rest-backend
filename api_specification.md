@@ -26,6 +26,7 @@ The table below shows the HTTP headers used to exchange the message meta-data. A
 | Action | The Action used by the _User Message_. | Submit and Delivery |
 | Content-Type | The MIME Type of the payload. NOTE that this header is a standard HTTP header and therefore not prefixed! | Submit and Delivery |
 | Containment | Indicates how a XML payload should be included in the _User Message_. Value can be either "ATTACHMENT" or "BODY". | Submit |
+| Content-Id | The Content-Id to use for the attachment that contains the payload. NOTE that this header is a standard HTTP header and therefore not prefixed!. Optional, when not provided Holodeck B2B will generate a Content-Id | Submit |
 | PayloadProperties | Comma separated list of the payload specific properties. Same formatting as for the _Message Properties_ | Submit and Delivery |
 | SchemaNamespace | The name space URI of the schema that defines the content of the payload | Submit and Delivery |
 | SchemaVersion | The version of the schema that defines the content of the payload | Submit and Delivery |

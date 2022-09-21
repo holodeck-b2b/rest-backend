@@ -34,6 +34,7 @@ import org.holodeckb2b.common.testhelpers.Submitter;
 import org.holodeckb2b.common.testhelpers.TestUtils;
 import org.holodeckb2b.common.util.CompareUtils;
 import org.holodeckb2b.commons.util.FileUtils;
+import org.holodeckb2b.commons.util.MessageIdUtils;
 import org.holodeckb2b.commons.util.Utils;
 import org.holodeckb2b.interfaces.core.HolodeckB2BCoreInterface;
 import org.holodeckb2b.interfaces.general.IProperty;
@@ -189,7 +190,8 @@ class SubmitOperationTest {
 		
 		final String plData = TestUtils.getPath("payloads/test.xml").toString();
 		final String plMimeType = "application/xml";		
-		final Containment plContainment = Containment.BODY;
+		final Containment plContainment = Containment.ATTACHMENT;
+		final String plCid = MessageIdUtils.createContentId(msgId);		
 		
 		final String plSchemLoc = "http://test.holodeck-b2b.org/test.xsd";
 		final String plSchemaVersion = "1.0";
@@ -214,6 +216,7 @@ class SubmitOperationTest {
 		headers.setProperties(HTTPHeaders.MESSAGE_PROPS, msgProps);
 		headers.setHeader(HTTPHeaders.MIME_TYPE, plMimeType);
 		headers.setHeader(HTTPHeaders.CONTAINMENT, plContainment.name());
+		headers.setHeader(HTTPHeaders.CONTENT_ID, plCid);
 		headers.setHeader(HTTPHeaders.SCHEMA_LOCATION, plSchemLoc);
 		headers.setHeader(HTTPHeaders.SCHEMA_VERSION, plSchemaVersion);
 		headers.setHeader(HTTPHeaders.SCHEMA_NS, plSchemaNS);
@@ -258,6 +261,7 @@ class SubmitOperationTest {
 		assertEquals(1, usrMsg.getPayloads().size());
 		final IPayload payload = usrMsg.getPayloads().iterator().next();
 		assertEquals(plContainment, payload.getContainment());
+		assertEquals(plCid, payload.getPayloadURI());
 		assertEquals(plMimeType, payload.getMimeType());
 		assertFalse(Utils.isNullOrEmpty(payload.getProperties()));
 		assertTrue(plProps.stream().allMatch(o -> payload.getProperties().parallelStream()

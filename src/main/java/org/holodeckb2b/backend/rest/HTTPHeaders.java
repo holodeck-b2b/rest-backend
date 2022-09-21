@@ -101,6 +101,11 @@ public class HTTPHeaders {
 	 */
 	public static final String CONTAINMENT = "X-HolodeckB2B-Containment";
 	/**
+	 * The Content-Id to be used when the payload is contained as attachment in the User Message. Only used in the
+	 * <i>Submit</i> operation.
+	 */
+	public static final String CONTENT_ID = "Content-Id";
+	/**
 	 * Comma separated list of the <i>Part Properties</i> of the User Message. Used in both the <i>Submit</i> and 
 	 * <i>Delivery</i> operations.
 	 */
