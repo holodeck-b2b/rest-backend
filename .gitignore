@@ -38,6 +38,7 @@ nbproject/
 *.iml
 .idea
 .classpath
+*.swp
 
 # OS generated files #
 ######################
