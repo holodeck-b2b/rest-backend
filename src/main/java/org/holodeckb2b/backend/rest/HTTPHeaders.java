@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.holodeckb2b.common.messagemodel.PartyId;
 import org.holodeckb2b.common.messagemodel.Property;
 import org.holodeckb2b.common.messagemodel.Service;
@@ -35,8 +34,8 @@ import org.holodeckb2b.interfaces.messagemodel.IEbmsError;
 import org.holodeckb2b.interfaces.submit.MessageSubmitException;
 
 /**
- * Defines and handles the HTTP headers used in the REST back-end integration. 
- * 
+ * Defines and handles the HTTP headers used in the REST back-end integration.
+ *
  * @author Sander Fieten (sander at holodeck-b2b.org)
  */
 public class HTTPHeaders {
@@ -47,7 +46,7 @@ public class HTTPHeaders {
 	/**
 	 * The messageId of the message. Used in all operations.
 	 */
-	public static final String	MESSAGE_ID = "X-HolodeckB2B-MessageId";	
+	public static final String	MESSAGE_ID = "X-HolodeckB2B-MessageId";
 	/**
 	 * The time stamp of the message. Used in all operations.
 	 */
@@ -55,7 +54,7 @@ public class HTTPHeaders {
 	/**
 	 * The refToMessageId contained in the message. Used in all operations.
 	 */
-	public static final String	REF_TO_MESSAGE_ID = "X-HolodeckB2B-RefToMessageId";	
+	public static final String	REF_TO_MESSAGE_ID = "X-HolodeckB2B-RefToMessageId";
 	/**
 	 * The PartyId of the Sender of the User Message. Used in both the <i>Submit</i> and <i>Delivery</i> operations.
 	 */
@@ -73,12 +72,12 @@ public class HTTPHeaders {
 	 */
 	public static final String	RECEIVER_ROLE = "X-HolodeckB2B-ReceiverRole";
 	/**
-	 * Comma separated list of the <i>Message Properties</i> of the User Message. Used in both the <i>Submit</i> and 
+	 * Comma separated list of the <i>Message Properties</i> of the User Message. Used in both the <i>Submit</i> and
 	 * <i>Delivery</i> operations.
 	 */
 	public static final String MESSAGE_PROPS = "X-HolodeckB2B-MessageProperties";
 	/**
-	 * The ConversationId (to be) contained in the User Message. Used in both the <i>Submit</i> and <i>Delivery</i> 
+	 * The ConversationId (to be) contained in the User Message. Used in both the <i>Submit</i> and <i>Delivery</i>
 	 * operations.
 	 */
 	public static final String	CONVERSATION_ID = "X-HolodeckB2B-ConversationId";
@@ -91,12 +90,12 @@ public class HTTPHeaders {
 	 */
 	public static final String	ACTION = "X-HolodeckB2B-Action";
 	/**
-	 * The MIME Type of the payload contained in the User Message. Used in both the <i>Submit</i> and <i>Delivery</i> 
+	 * The MIME Type of the payload contained in the User Message. Used in both the <i>Submit</i> and <i>Delivery</i>
 	 * operations.
 	 */
 	public static final String	MIME_TYPE = "Content-Type";
 	/**
-	 * The way the payload should be contained in the User Message. Used in both the <i>Submit</i> and <i>Delivery</i> 
+	 * The way the payload should be contained in the User Message. Used in both the <i>Submit</i> and <i>Delivery</i>
 	 * operations.
 	 */
 	public static final String CONTAINMENT = "X-HolodeckB2B-Containment";
@@ -106,53 +105,57 @@ public class HTTPHeaders {
 	 */
 	public static final String CONTENT_ID = "Content-Id";
 	/**
-	 * Comma separated list of the <i>Part Properties</i> of the User Message. Used in both the <i>Submit</i> and 
+	 * The URI of the payload - Only used in <i>Submit</i> operation. Optional.
+	 */
+	public static final String PAYLOAD_URI = "X-HolodeckB2B-Payload-URI";
+	/**
+	 * Comma separated list of the <i>Part Properties</i> of the User Message. Used in both the <i>Submit</i> and
 	 * <i>Delivery</i> operations.
 	 */
 	public static final String PART_PROPS = "X-HolodeckB2B-PayloadProperties";
 	/**
-	 * The name space URI of the schema that defines the content of the payload contained in the User Message. Used in 
+	 * The name space URI of the schema that defines the content of the payload contained in the User Message. Used in
 	 * both the <i>Submit</i> and <i>Delivery</i> operations.
 	 */
-	public static final String SCHEMA_NS = "X-HolodeckB2B-SchemaNamespace";	
+	public static final String SCHEMA_NS = "X-HolodeckB2B-SchemaNamespace";
 	/**
-	 * The version of the schema that defines the content of the payload contained in the User Message. Used in 
+	 * The version of the schema that defines the content of the payload contained in the User Message. Used in
 	 * both the <i>Submit</i> and <i>Delivery</i> operations.
 	 */
 	public static final String SCHEMA_VERSION = "X-HolodeckB2B-SchemaVersion";
 	/**
-	 * The location of the schema that defines the content of the payload contained in the User Message. Used in 
+	 * The location of the schema that defines the content of the payload contained in the User Message. Used in
 	 * both the <i>Submit</i> and <i>Delivery</i> operations.
 	 */
 	public static final String SCHEMA_LOCATION = "X-HolodeckB2B-SchemaLocation";
 	/**
 	 * Includes a comma separated list describing the received ebMS Errors. Only used in <i>Notify</i> operation for
-	 * ebMS Errors.   
+	 * ebMS Errors.
 	 */
 	public static final String ERROR_MESSAGE = "X-HolodeckB2B-Errors";
-	
-	
+
+
 	private final HashMap<String, String> headers = new HashMap<>();
-	
+
 	/**
 	 * Creates a new instance with an empty set of HTTP headers.
 	 */
 	public HTTPHeaders() {}
-	
+
 	/**
 	 * Creates a new instance initialised with the given set of HTTP headers which names are converted to lower case
-	 * because HTTP header names are case insensitive. 
-	 * 
+	 * because HTTP header names are case insensitive.
+	 *
 	 * @param hdrs	The HTTP from the submission request
 	 */
 	public HTTPHeaders(final Map<String, String> hdrs) {
-		if (!Utils.isNullOrEmpty(hdrs)) 
-			hdrs.forEach((k, v) -> this.headers.put(k.toLowerCase(), v));		
+		if (!Utils.isNullOrEmpty(hdrs))
+			hdrs.forEach((k, v) -> this.headers.put(k.toLowerCase(), v));
 	}
-	
+
 	/**
 	 * Set the value of an HTTP header.
-	 * 
+	 *
 	 * @param name		Name of the header
 	 * @param value		The value of the header
 	 */
@@ -163,26 +166,26 @@ public class HTTPHeaders {
 
 	/**
 	 * Gets the string value of the requested header.
-	 * 
+	 *
 	 * @param name	The name of the header to get
 	 * @return		The string value of the header, <code>null</code> if no such header exists
 	 */
 	public String getHeader(final String name) {
 		return headers.get(name.toLowerCase());
 	}
-	
+
 	/**
 	 * Gets all HTTP headers.
-	 * 
+	 *
 	 * @return	Map containing the name, value pairs of all headers
 	 */
 	public Map<String, String> getAllHeaders() {
 		return headers;
 	}
 	/**
-	 * Formats the given <i>PartyId</i> and sets it as value of the specified header. The PartyId is formatted as 
+	 * Formats the given <i>PartyId</i> and sets it as value of the specified header. The PartyId is formatted as
 	 * "[" + <i>PartyId.type</i> + "]" + <i>PartuId.value</i> with the type being optional.
-	 * 
+	 *
 	 * @param header	The header to set
 	 * @param partyId	The PartyId to include
 	 */
@@ -190,44 +193,44 @@ public class HTTPHeaders {
 		if (partyId != null && !Utils.isNullOrEmpty(partyId.getId()))
 			setHeader(header, createTypedValue(partyId.getId(), partyId.getType()));
 	}
-	
+
 	/**
-	 * Parse a PartyId from the specified header. The PartyId should be formatted as "[" + <i>PartyId.type</i> + "]" 
+	 * Parse a PartyId from the specified header. The PartyId should be formatted as "[" + <i>PartyId.type</i> + "]"
 	 * + <i>PartuId.value</i> with the type being optional.
-	 *  
+	 *
 	 * @param name		The name of the header that should contain the PartyId
 	 * @return			The PartyId parsed from the provided header value
 	 * @throws MessageSubmitException When the header does not contain a correctly formatted PartyId
 	 */
 	public IPartyId getPartydId(final String name) throws MessageSubmitException {
-		final String hdrVal = headers.get(name.toLowerCase());		
+		final String hdrVal = headers.get(name.toLowerCase());
 		if (Utils.isNullOrEmpty(hdrVal))
 			return null;
-		
+
 		try {
-			final String[] valueAndType = parseTypedValue(hdrVal);		
+			final String[] valueAndType = parseTypedValue(hdrVal);
 			return new PartyId(valueAndType[0], valueAndType[1]);
 		} catch (MessageSubmitException invalid) {
 			throw new MessageSubmitException("Invalid PartyId specified in " + name);
 		}
-	}	
+	}
 
 	/**
-	 * Formats the given <i>Service</i> and sets it as value of the "Service" header. The Service is formatted as 
+	 * Formats the given <i>Service</i> and sets it as value of the "Service" header. The Service is formatted as
 	 * "[" + <i>Service.type</i> + "]" + <i>Service.name</i> with the type being optional.
-	 * 
+	 *
 	 * @param service	The Service to include in the headers
 	 */
 	public void setServiceHeader(final IService service) {
 		if (service != null && !Utils.isNullOrEmpty(service.getName()))
-			setHeader(SERVICE, createTypedValue(service.getName(), service.getType()));		
+			setHeader(SERVICE, createTypedValue(service.getName(), service.getType()));
 	}
-	
+
 	/**
 	 * Checks if there is a header specifying the Service to use and if parses the String value into a {@link IService}
-	 * instance. The Service should be formatted as "[" + <i>Service.type</i> + "]" + <i>Service.name</i> with the type 
+	 * instance. The Service should be formatted as "[" + <i>Service.type</i> + "]" + <i>Service.name</i> with the type
 	 * being optional.
-	 *  
+	 *
 	 * @return			The Service parsed from the provided header value
 	 * @throws MessageSubmitException When the header does not contain a correctly formatted Service value
 	 */
@@ -235,37 +238,37 @@ public class HTTPHeaders {
 		final String hdrVal = headers.get(SERVICE.toLowerCase());
 		if (Utils.isNullOrEmpty(hdrVal))
 			return null;
-		
+
 		try {
-			final String[] valueAndType = parseTypedValue(hdrVal);		
+			final String[] valueAndType = parseTypedValue(hdrVal);
 			return new Service(valueAndType[0], valueAndType[1]);
 		} catch (MessageSubmitException invalid) {
 			throw new MessageSubmitException("Invalid Service value specified");
 		}
-	}	
-	
+	}
+
 	/**
 	 * Helper method to crate a header value representing a typed value, like PartyId or Service.
-	 * 
+	 *
 	 * @param value		The actual value
 	 * @param type		The type of the value
 	 * @return	The correctly formatted header value
 	 */
 	private static String createTypedValue(final String value, final String type) {
-		StringBuilder hdrVal = new StringBuilder();		
-		if (!Utils.isNullOrEmpty(type)) 
+		StringBuilder hdrVal = new StringBuilder();
+		if (!Utils.isNullOrEmpty(type))
 			hdrVal.append('[').append(type).append(']');
 		hdrVal.append(value);
-		
-		return hdrVal.toString();		
-	}	
+
+		return hdrVal.toString();
+	}
 
 	/**
 	 * Helper method to parse a header value containing a typed value, like PartyId or Service.
-	 * 
+	 *
 	 * @param hdrVal	The header value
 	 * @return			2 element String array containing the parsed value and type
-	 * @throws MessageSubmitException	When the given value is not in correct format 
+	 * @throws MessageSubmitException	When the given value is not in correct format
 	 */
 	private static String[] parseTypedValue(final String hdrVal) throws MessageSubmitException {
 		String type = null;
@@ -277,22 +280,22 @@ public class HTTPHeaders {
 			type = te == 1 ? null : hdrVal.substring(1, te);
 		}
 		String value = hdrVal.substring(te + 1);
-		
+
 		return new String[] {value, type};
-	}	
+	}
 
 	/**
 	 * Formats the given colleciton of <i>Properties</i> and sets it as value of the specified header. The properties
-	 * are formatted as comma separated of <i>name</i> + "=" + "[" + <i>type</i> + "]" + <i>value</i> with the type 
+	 * are formatted as comma separated of <i>name</i> + "=" + "[" + <i>type</i> + "]" + <i>value</i> with the type
 	 * part being optional.
-	 *  
+	 *
 	 * @param header	The header to set
 	 * @param props		The collection of properties
 	 */
 	public void setProperties(final String header, final Collection<IProperty> props) {
-		if (Utils.isNullOrEmpty(props)) 
+		if (Utils.isNullOrEmpty(props))
 			return;
-		
+
 		StringBuilder hdrVal = new StringBuilder();
 		for(Iterator<IProperty> it = props.iterator(); it.hasNext();) {
 			IProperty p = it.next();
@@ -303,10 +306,10 @@ public class HTTPHeaders {
 			if (it.hasNext())
 				hdrVal.append(',');
 		}
-		
+
 		setHeader(header, hdrVal.toString());
 	}
-	
+
     // Lazily initialize since Pattern.compile() is heavy (and only needed when Message or Part properties are used)
     private static final class PropertyPatternHolder {
         /*
@@ -324,12 +327,12 @@ public class HTTPHeaders {
         private static Pattern pattern =
         					Pattern.compile("\\s*([\\S&&[^=\\s]]*)\\s*=\\s*(\\[([\\S&&[^,]]*)])?([^\\[ ,][\\S&&[^,]]*)\\s*(\\,(.*))?");
     }
-    
+
     /**
-     * Parses a collection of properties from the specified header. Properties should be comma separated and formatted 
+     * Parses a collection of properties from the specified header. Properties should be comma separated and formatted
      * as <i>name</i> + "=" + "[" + <i>type</i> + "]" + <i>value</i> with the type part being optional.
-     *  
-     * @param header	The header name 
+     *
+     * @param header	The header name
      * @return			The collection of properties parsed from the provided header value
      * @throws MessageSubmitException	When the header does not contain a correctly formatted list of properties
      */
@@ -344,25 +347,25 @@ public class HTTPHeaders {
             	final String type = Utils.isNullOrEmpty(m.group(3)) ? null : m.group(3);
             	if (Utils.isNullOrEmpty(name) || Utils.isNullOrEmpty(value))
             		throw new MessageSubmitException(header + " not in correct format");
-                properties.add(new Property(name, value, type));                
+                properties.add(new Property(name, value, type));
                 remainder = m.group(6);
-            } else 
+            } else
                 throw new MessageSubmitException(header + " not in correct format");
-            
-        }        
+
+        }
         return properties;
     }
-    
+
     /**
 	 * Formats the given colleciton of <i>ebMS Errors</i> and sets it as value of the "Error" header. The errors
 	 * are formatted as comma separated of "[" + <i>severity</i> + "]" + <i>error code</i> + "-" + <i>error detail</i>.
-	 *  
+	 *
 	 * @param errors 	The collection of ebMS errors to include in the header
      */
     public void setErrorMessage(final Collection<IEbmsError> errors) {
     	if (Utils.isNullOrEmpty(errors))
     		return;
-    	
+
     	StringBuilder hdrVal = new StringBuilder();
 		for(Iterator<IEbmsError> it = errors.iterator(); it.hasNext();) {
 			IEbmsError e = it.next();
@@ -372,8 +375,8 @@ public class HTTPHeaders {
 				hdrVal.append('-').append(e.getErrorDetail());
 			if (it.hasNext())
 				hdrVal.append(',');
-		}		
-		setHeader(ERROR_MESSAGE, hdrVal.toString());    	
+		}
+		setHeader(ERROR_MESSAGE, hdrVal.toString());
     }
 }
 

@@ -194,6 +194,9 @@ public class SubmitOperation extends AbstractMessageReceiver {
 		payload.setContainment(containment);
 		if (containment == Containment.ATTACHMENT)
 			payload.setPayloadURI(headers.getHeader(HTTPHeaders.CONTENT_ID));
+		final String payloadURI = headers.getHeader(HTTPHeaders.PAYLOAD_URI);
+		if (!Utils.isNullOrEmpty(payloadURI))
+			payload.setPayloadURI(payloadURI);
 		payload.setMimeType(headers.getHeader(HTTPHeaders.MIME_TYPE));
 		payload.setProperties(headers.getProperties(HTTPHeaders.PART_PROPS));
 		

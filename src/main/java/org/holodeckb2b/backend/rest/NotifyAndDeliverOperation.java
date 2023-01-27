@@ -242,7 +242,8 @@ public class NotifyAndDeliverOperation implements IMessageDelivererFactory {
 	            				MessageUnitUtils.getMessageUnitName(signal), signal.getMessageId());	            
             } catch (IOException conError) {
             	log.error("Error in notification of {} [msgId={}]. Error details: {}", 
-            				MessageUnitUtils.getMessageUnitName(signal), signal.getMessageId(), conError.getMessage());
+            				MessageUnitUtils.getMessageUnitName(signal), signal.getMessageId(), 
+            				Utils.getExceptionTrace(conError));
             	throw new MessageDeliveryException("Error in notification to back-end", conError);
             }	
 		}
