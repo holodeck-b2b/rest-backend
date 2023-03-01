@@ -8,6 +8,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * HTTP Header _X-HolodeckB2B-Payload-URI_ to specify the URI to reference the payload as an alternative to using the 
  standard _Content-Id_ header
 
+### Changed
+* Based on Holodeck B2B 6.0.0
+
 ## 1.2.0
 ##### 2022-09-21
 ### Added

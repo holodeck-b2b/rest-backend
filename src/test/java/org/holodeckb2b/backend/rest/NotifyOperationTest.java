@@ -67,7 +67,7 @@ class NotifyOperationTest {
 		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");		
 		try {
 			dm.init(settings);
-			dm.createMessageDeliverer().deliver(receipt);			
+			dm.deliver(receipt);			
 		} catch (MessageDeliveryException e) {
 			e.printStackTrace();
 			fail();
@@ -108,7 +108,7 @@ class NotifyOperationTest {
 		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");		
 		try {
 			dm.init(settings);
-			dm.createMessageDeliverer().deliver(errMsg);			
+			dm.deliver(errMsg);			
 		} catch (MessageDeliveryException e) {
 			e.printStackTrace();
 			fail();
@@ -140,7 +140,7 @@ class NotifyOperationTest {
 		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");		
 		try {
 			dm.init(settings);
-			dm.createMessageDeliverer().deliver(errMsg);
+			dm.deliver(errMsg);
 			fail();
 		} catch (MessageDeliveryException e) {
 		}		
@@ -160,7 +160,7 @@ class NotifyOperationTest {
 		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/reject");		
 		try {
 			dm.init(settings);
-			dm.createMessageDeliverer().deliver(receipt);
+			dm.deliver(receipt);
 			fail();
 		} catch (MessageDeliveryException e) {
 		}		
@@ -182,7 +182,7 @@ class NotifyOperationTest {
 		settings.put(NotifyAndDeliverOperation.P_TIMEOUT, "800");		
 		try {
 			dm.init(settings);
-			dm.createMessageDeliverer().deliver(receipt);
+			dm.deliver(receipt);
 			fail();
 		} catch (MessageDeliveryException e) {
 		}		

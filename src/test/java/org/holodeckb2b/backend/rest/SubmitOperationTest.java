@@ -30,9 +30,9 @@ import org.holodeckb2b.common.messagemodel.PartyId;
 import org.holodeckb2b.common.messagemodel.Property;
 import org.holodeckb2b.common.messagemodel.Service;
 import org.holodeckb2b.common.testhelpers.HolodeckB2BTestCore;
-import org.holodeckb2b.common.testhelpers.Submitter;
-import org.holodeckb2b.common.testhelpers.TestUtils;
+import org.holodeckb2b.common.testhelpers.TestMessageSubmitter;
 import org.holodeckb2b.common.util.CompareUtils;
+import org.holodeckb2b.commons.testing.TestUtils;
 import org.holodeckb2b.commons.util.FileUtils;
 import org.holodeckb2b.commons.util.MessageIdUtils;
 import org.holodeckb2b.commons.util.Utils;
@@ -56,7 +56,7 @@ class SubmitOperationTest {
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		final Path hb2bHome = TestUtils.getPath(".").resolve("hb2b-home");
+		final Path hb2bHome = TestUtils.getTestResource("hb2b-home");
 		if (Files.exists(hb2bHome))
 				FileUtils.removeDirectory(hb2bHome);		
 		Files.createDirectories(hb2bHome);
@@ -67,7 +67,7 @@ class SubmitOperationTest {
 
 	@BeforeEach
 	void clearSubmissions() {
-		((Submitter) testCore.getMessageSubmitter()).clear();
+		((TestMessageSubmitter) testCore.getMessageSubmitter()).clear();
 	}
 	
 	@ParameterizedTest
@@ -75,7 +75,7 @@ class SubmitOperationTest {
 	void testPayloadSave(String payloadFile) {
 		final String pmodeId = "pm-test-rest";
 
-		final String submittedPayload = TestUtils.getPath("payloads/").resolve(payloadFile).toString();
+		final String submittedPayload = TestUtils.getTestResource("payloads/").resolve(payloadFile).toString();
 		String mimeType;
 		try {
 			mimeType = FileUtils.detectMimeType(new File(submittedPayload));
@@ -98,7 +98,7 @@ class SubmitOperationTest {
 			fail();
 		}
 		
-		final Collection<IMessageUnit> submissions = ((Submitter) testCore.getMessageSubmitter()).getAllSubmitted();
+		final Collection<IMessageUnit> submissions = ((TestMessageSubmitter) testCore.getMessageSubmitter()).getAllSubmitted();
 		assertEquals(1, submissions.size());
 		final IMessageUnit submitted = submissions.iterator().next();
 		assertTrue(submitted instanceof IUserMessage);
@@ -146,7 +146,7 @@ class SubmitOperationTest {
 	void testStreamClosure() {	
 		final String pmodeId = "pm-test-rest";
 
-		final String submittedPayload = TestUtils.getPath("payloads/test.xml").toString();
+		final String submittedPayload = TestUtils.getTestResource("payloads/test.xml").toString();
 		final String mimeType = "application/xml";			
 		
 		final HashMap<String, String> headers = new HashMap<>();
@@ -188,7 +188,7 @@ class SubmitOperationTest {
 																			  new Property("mp2", "val2", "t1")																				
 																			});
 		
-		final String plData = TestUtils.getPath("payloads/test.xml").toString();
+		final String plData = TestUtils.getTestResource("payloads/test.xml").toString();
 		final String plMimeType = "application/xml";		
 		final Containment plContainment = Containment.ATTACHMENT;
 		final String plCid = MessageIdUtils.createContentId(msgId);		
@@ -233,7 +233,7 @@ class SubmitOperationTest {
 			fail();
 		}
 	
-		final Collection<IMessageUnit> submissions = ((Submitter) testCore.getMessageSubmitter()).getAllSubmitted();
+		final Collection<IMessageUnit> submissions = ((TestMessageSubmitter) testCore.getMessageSubmitter()).getAllSubmitted();
 		assertEquals(1, submissions.size());
 		final IMessageUnit submitted = submissions.iterator().next();
 		assertEquals(pmodeId, submitted.getPModeId());

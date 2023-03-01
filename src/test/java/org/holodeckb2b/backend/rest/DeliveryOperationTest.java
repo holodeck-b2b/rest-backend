@@ -44,8 +44,8 @@ import org.holodeckb2b.common.messagemodel.SchemaReference;
 import org.holodeckb2b.common.messagemodel.Service;
 import org.holodeckb2b.common.messagemodel.TradingPartner;
 import org.holodeckb2b.common.messagemodel.UserMessage;
-import org.holodeckb2b.common.testhelpers.TestUtils;
 import org.holodeckb2b.common.util.CompareUtils;
+import org.holodeckb2b.commons.testing.TestUtils;
 import org.holodeckb2b.commons.util.FileUtils;
 import org.holodeckb2b.commons.util.Utils;
 import org.holodeckb2b.interfaces.delivery.MessageDeliveryException;
@@ -74,7 +74,7 @@ class DeliveryOperationTest {
 	@ParameterizedTest
 	@ValueSource(strings = { "test.xml", "logo.png", "random.bin" })
 	void testDeliveryOkay(String payloadFile) throws Exception {
-		final String plData = TestUtils.getPath("payloads/").resolve(payloadFile).toString();
+		final String plData = TestUtils.getTestResource("payloads/").resolve(payloadFile).toString();
 		String mimeType;
 		try {
 			mimeType = FileUtils.detectMimeType(new File(plData));
@@ -127,7 +127,7 @@ class DeliveryOperationTest {
 		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");		
 		try {
 			dm.init(settings);
-			dm.createMessageDeliverer().deliver(userMsg);			
+			dm.deliver(userMsg);			
 		} catch (MessageDeliveryException e) {
 			e.printStackTrace();
 			fail();
@@ -214,7 +214,7 @@ class DeliveryOperationTest {
 		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");		
 		try {
 			dm.init(settings);
-			dm.createMessageDeliverer().deliver(userMsg);			
+			dm.deliver(userMsg);			
 		} catch (MessageDeliveryException e) {
 			e.printStackTrace();
 			fail();
@@ -277,7 +277,7 @@ class DeliveryOperationTest {
 		userMsg.setCollaborationInfo(cInfo);
 
 		Payload payload = new Payload();
-		payload.setContentLocation(TestUtils.getPath("payloads/test.xml").toString());
+		payload.setContentLocation(TestUtils.getTestResource("payloads/test.xml").toString());
 		payload.setMimeType("text/xml");		
 		
 		NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
@@ -285,7 +285,7 @@ class DeliveryOperationTest {
 		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/reject");		
 		try {
 			dm.init(settings);
-			dm.createMessageDeliverer().deliver(userMsg);
+			dm.deliver(userMsg);
 			fail();
 		} catch (MessageDeliveryException e) {			
 		}
@@ -316,7 +316,7 @@ class DeliveryOperationTest {
 		userMsg.setCollaborationInfo(cInfo);
 
 		Payload payload = new Payload();
-		payload.setContentLocation(TestUtils.getPath("payloads/test.xml").toString());
+		payload.setContentLocation(TestUtils.getTestResource("payloads/test.xml").toString());
 		payload.setMimeType("text/xml");		
 		
 		NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
@@ -325,7 +325,7 @@ class DeliveryOperationTest {
 		settings.put(NotifyAndDeliverOperation.P_TIMEOUT, "800");		
 		try {
 			dm.init(settings);
-			dm.createMessageDeliverer().deliver(userMsg);
+			dm.deliver(userMsg);
 			fail();
 		} catch (MessageDeliveryException e) {			
 		}

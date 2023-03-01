@@ -9,7 +9,7 @@ Issue tracker https://github.com/holodeck-b2b/rest-backend/issues
 
 ## Installation
 ### Prerequisites  
-This extension requires that you have already deployed Holodeck B2B version 5.0.0 or later and the [*"rest-no-error-content"* Axis2 module](https://github.com/holodeck-b2b/axis2-rest-status-only-error).
+This extension requires that you have already deployed Holodeck B2B version 6.0.0 or later and the [*"rest-no-error-content"* Axis2 module](https://github.com/holodeck-b2b/axis2-rest-status-only-error).
 
 ### Installation and Configuration
 First step is to build the extension or download the latest release. You should now have the `rest-backend-«version».jar` and `hb2b-rest-backend.aar` files available. Copy the jar file to the `lib` directory of the Holodeck B2B instance and copy the aar file to the `repository/services` directory to enable the REST interface in the Holodeck B2B instance. Please note that you cannot activate the extension in a running Holodeck B2B instance and will need to restart the server to activate the REST extension.
