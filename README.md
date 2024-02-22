@@ -19,6 +19,7 @@ P-Modes by setting the _delivery method_. To use this REST back-end integration 
 1. _URL_ : the URL where the REST service is hosted by the back-end application. As explained above "/deliver" will be added
  to this URL when delivering _User Messages_ and for "/notify/receipt" and "/notify/error" for notification of _Receipt_ respectively _Error_ Signals.
 2. _TIMEOUT_ : the time (in milliseconds) the delivery method should wait for the back-end system to accept the delivery and notification. This parameter is optional and when not specified a default timeout of 10 seconds will be used.
+3. _SIGNAL_WITH_CONVID_ : indicates whether the <i>ConversationId</i> of the User Message referenced by the notified Signal Message should be included in the notification to the back-end system. This is an optional parameter and when not specified the ConversationId will not be included.
 
 ## API Specification
 For a full description how the operations are implemented see the [API Specification page](api_specification.md).

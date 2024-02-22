@@ -21,7 +21,7 @@ The table below shows the HTTP headers used to exchange the message meta-data. A
 | ReceiverId | The PartyId of the Receiver of the _User Message_. Formatted as `[ "["`_`type`_`"]"  ] `_`identifier`_| Submit and Delivery |
 | ReceiverRole | The Role of the Receiver of the _User Message_. | Submit and Delivery |
 | MessageProperties | Comma separated list of the <i>Message Properties</i> of the _User Message_. Each property is formatted as _`name`_`"=" [ "["`_`type`_`"]" ]`_`value`_ with the type part being optional. | Submit and Delivery |
-| ConversationId | The ConversationId contained in the User Message. | Submit and Delivery |
+| ConversationId | For the Submit and Deliver operation the ConversationId contained in the User Message. <br>For Notify the ConversationId of the referenced User Message (if one was specified).| Submit, Delivery and optionally Notify |
 | Service | The Service used by the _User Message_. Formatted as `[ "["`_`type`_`"]"  ] `_`name`_ | Submit and Delivery |
 | Action | The Action used by the _User Message_. | Submit and Delivery |
 | Content-Type | The MIME Type of the payload. NOTE that this header is a standard HTTP header and therefore not prefixed! | Submit and Delivery |

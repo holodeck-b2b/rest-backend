@@ -28,165 +28,238 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.holodeckb2b.backend.rest.testhelpers.BackendMock;
+import org.holodeckb2b.common.messagemodel.CollaborationInfo;
 import org.holodeckb2b.common.messagemodel.EbmsError;
 import org.holodeckb2b.common.messagemodel.ErrorMessage;
 import org.holodeckb2b.common.messagemodel.Receipt;
+import org.holodeckb2b.common.messagemodel.UserMessage;
+import org.holodeckb2b.common.testhelpers.HolodeckB2BTestCore;
 import org.holodeckb2b.commons.util.Utils;
+import org.holodeckb2b.core.HolodeckB2BCore;
+import org.holodeckb2b.interfaces.core.HolodeckB2BCoreInterface;
 import org.holodeckb2b.interfaces.delivery.MessageDeliveryException;
 import org.holodeckb2b.interfaces.messagemodel.IEbmsError.Severity;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class NotifyOperationTest {
 
-	private static BackendMock backend;
-	
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
-		backend = new BackendMock(1000);
-		backend.start();
-	}
+    private static BackendMock backend;
 
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-		backend.stop();
-	}
+    @BeforeAll
+    static void setUpBeforeClass() throws Exception {
+        backend = new BackendMock(1000);
+        backend.start();
+        
+        HolodeckB2BCoreInterface.setImplementation(new HolodeckB2BTestCore());
+    }
 
-	@Test
-	void testNotifyReceipt() throws Exception {
-		final Receipt receipt = new Receipt();
-		
-		receipt.setPModeId("pm-test-notify");
-		receipt.setMessageId(UUID.randomUUID().toString());
-		receipt.setTimestamp(new Date());
-		receipt.setRefToMessageId(UUID.randomUUID().toString());
-		
-		NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
-		Map<String, String> settings = new HashMap<>();
-		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");		
-		try {
-			dm.init(settings);
-			dm.deliver(receipt);			
-		} catch (MessageDeliveryException e) {
-			e.printStackTrace();
-			fail();
-		}
-		
-		assertTrue(backend.getRequestURL().getPath().endsWith("/notify/receipt"));
-		
-		HTTPHeaders headers = backend.getRcvdHeaders();		
-		assertNotNull(headers);
-		assertEquals("0", headers.getHeader("content-length"));
-		assertEquals(receipt.getPModeId(), headers.getHeader(HTTPHeaders.PMODE_ID));
-		assertEquals(receipt.getMessageId(), headers.getHeader(HTTPHeaders.MESSAGE_ID));
-		assertEquals(receipt.getTimestamp(), Utils.fromXMLDateTime(headers.getHeader(HTTPHeaders.TIMESTAMP)));
-		assertEquals(receipt.getRefToMessageId(), headers.getHeader(HTTPHeaders.REF_TO_MESSAGE_ID));		
-	}		
-	
-	@Test
-	void testNotifyError() throws Exception {
-		final ErrorMessage errMsg = new ErrorMessage();
-		
-		errMsg.setPModeId("pm-test-notify");
-		errMsg.setMessageId(UUID.randomUUID().toString());
-		errMsg.setTimestamp(new Date());
-		errMsg.setRefToMessageId(UUID.randomUUID().toString());
-		
-		final EbmsError e1 = new EbmsError();
-		e1.setErrorCode("TST:0001");
-		e1.setSeverity(Severity.failure);
-		e1.setErrorDetail("Not so good");
-		errMsg.addError(e1);
-		final EbmsError e2 = new EbmsError();
-		e2.setErrorCode("TST:0002");
-		e2.setSeverity(Severity.warning);
-		errMsg.addError(e2);		
-		
-		NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
-		Map<String, String> settings = new HashMap<>();
-		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");		
-		try {
-			dm.init(settings);
-			dm.deliver(errMsg);			
-		} catch (MessageDeliveryException e) {
-			e.printStackTrace();
-			fail();
-		}
-		
-		assertTrue(backend.getRequestURL().getPath().endsWith("/notify/error"));
-		
-		HTTPHeaders headers = backend.getRcvdHeaders();		
-		assertNotNull(headers);
-		assertEquals("0", headers.getHeader("content-length"));
-		assertEquals(errMsg.getPModeId(), headers.getHeader(HTTPHeaders.PMODE_ID));
-		assertEquals(errMsg.getMessageId(), headers.getHeader(HTTPHeaders.MESSAGE_ID));
-		assertEquals(errMsg.getTimestamp(), Utils.fromXMLDateTime(headers.getHeader(HTTPHeaders.TIMESTAMP)));
-		assertEquals(errMsg.getRefToMessageId(), headers.getHeader(HTTPHeaders.REF_TO_MESSAGE_ID));
-		
-		assertFalse(Utils.isNullOrEmpty(headers.getHeader(HTTPHeaders.ERROR_MESSAGE)));		
-	}		
-	
-	@Test
-	void testRejectNoRef() throws Exception {
-		final ErrorMessage errMsg = new ErrorMessage();
-		
-		errMsg.setPModeId("pm-test-notify");
-		errMsg.setMessageId(UUID.randomUUID().toString());
-		errMsg.setTimestamp(new Date());
-		
-		NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
-		Map<String, String> settings = new HashMap<>();
-		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");		
-		try {
-			dm.init(settings);
-			dm.deliver(errMsg);
-			fail();
-		} catch (MessageDeliveryException e) {
-		}		
-	}	
-	
-	@Test
-	void testNotifyRejection() throws Exception {
-		final Receipt receipt = new Receipt();
-		
-		receipt.setPModeId("pm-test-notify");
-		receipt.setMessageId(UUID.randomUUID().toString());
-		receipt.setTimestamp(new Date());
-		receipt.setRefToMessageId(UUID.randomUUID().toString());
-		
-		NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
-		Map<String, String> settings = new HashMap<>();
-		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/reject");		
-		try {
-			dm.init(settings);
-			dm.deliver(receipt);
-			fail();
-		} catch (MessageDeliveryException e) {
-		}		
-		assertTrue(backend.getRequestURL().getPath().endsWith("/notify/receipt"));		
-	}	
-	
-	@Test
-	void testNotifyTimeout() throws Exception {
-		final Receipt receipt = new Receipt();
-		
-		receipt.setPModeId("pm-test-notify");
-		receipt.setMessageId(UUID.randomUUID().toString());
-		receipt.setTimestamp(new Date());
-		receipt.setRefToMessageId(UUID.randomUUID().toString());
-		
-		NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
-		Map<String, String> settings = new HashMap<>();
-		settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/timeout");		
-		settings.put(NotifyAndDeliverOperation.P_TIMEOUT, "800");		
-		try {
-			dm.init(settings);
-			dm.deliver(receipt);
-			fail();
-		} catch (MessageDeliveryException e) {
-		}		
-		assertTrue(backend.getRequestURL().getPath().endsWith("/notify/receipt"));		
-	}	
-	
+    @AfterAll
+    static void tearDownAfterClass() throws Exception {
+        backend.stop();
+    }
+
+    @Test
+    void testNotifyReceipt() throws Exception {
+        final UserMessage refdMsg = new UserMessage();
+        refdMsg.setMessageId(UUID.randomUUID().toString());
+        CollaborationInfo ci = new CollaborationInfo();
+        final String convId = UUID.randomUUID().toString();
+        ci.setConversationId(convId);
+        refdMsg.setCollaborationInfo(ci);
+        
+        HolodeckB2BCore.getStorageManager().storeOutGoingMessageUnit(refdMsg);
+        
+        final Receipt receipt = new Receipt();
+        receipt.setPModeId("pm-test-notify");
+        receipt.setMessageId(UUID.randomUUID().toString());
+        receipt.setTimestamp(new Date());
+        receipt.setRefToMessageId(refdMsg.getMessageId());
+
+        NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
+        Map<String, String> settings = new HashMap<>();
+        settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");
+        settings.put(NotifyAndDeliverOperation.P_SIGNAL_CONVID, "true");
+
+        assertDoesNotThrow(() -> {
+            dm.init(settings);
+            dm.deliver(receipt);
+        });
+
+        assertTrue(backend.getRequestURL().getPath().endsWith("/notify/receipt"));
+
+        HTTPHeaders headers = backend.getRcvdHeaders();
+        assertNotNull(headers);
+        assertEquals("0", headers.getHeader("content-length"));
+        assertEquals(receipt.getPModeId(), headers.getHeader(HTTPHeaders.PMODE_ID));
+        assertEquals(receipt.getMessageId(), headers.getHeader(HTTPHeaders.MESSAGE_ID));
+        assertEquals(receipt.getTimestamp(), Utils.fromXMLDateTime(headers.getHeader(HTTPHeaders.TIMESTAMP)));
+        assertEquals(receipt.getRefToMessageId(), headers.getHeader(HTTPHeaders.REF_TO_MESSAGE_ID));
+        assertEquals(convId, headers.getHeader(HTTPHeaders.CONVERSATION_ID));
+    }
+
+    @Test
+    void testNotifyError() throws Exception {
+        final ErrorMessage errMsg = new ErrorMessage();
+
+        errMsg.setPModeId("pm-test-notify");
+        errMsg.setMessageId(UUID.randomUUID().toString());
+        errMsg.setTimestamp(new Date());
+        errMsg.setRefToMessageId(UUID.randomUUID().toString());
+
+        final EbmsError e1 = new EbmsError();
+        e1.setErrorCode("TST:0001");
+        e1.setSeverity(Severity.failure);
+        e1.setErrorDetail("Not so good");
+        errMsg.addError(e1);
+        final EbmsError e2 = new EbmsError();
+        e2.setErrorCode("TST:0002");
+        e2.setSeverity(Severity.warning);
+        errMsg.addError(e2);
+
+        NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
+        Map<String, String> settings = new HashMap<>();
+        settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");
+        try {
+            dm.init(settings);
+            dm.deliver(errMsg);
+        } catch (MessageDeliveryException e) {
+            e.printStackTrace();
+            fail();
+        }
+
+        assertTrue(backend.getRequestURL().getPath().endsWith("/notify/error"));
+
+        HTTPHeaders headers = backend.getRcvdHeaders();
+        assertNotNull(headers);
+        assertEquals("0", headers.getHeader("content-length"));
+        assertEquals(errMsg.getPModeId(), headers.getHeader(HTTPHeaders.PMODE_ID));
+        assertEquals(errMsg.getMessageId(), headers.getHeader(HTTPHeaders.MESSAGE_ID));
+        assertEquals(errMsg.getTimestamp(), Utils.fromXMLDateTime(headers.getHeader(HTTPHeaders.TIMESTAMP)));
+        assertEquals(errMsg.getRefToMessageId(), headers.getHeader(HTTPHeaders.REF_TO_MESSAGE_ID));
+
+        assertFalse(Utils.isNullOrEmpty(headers.getHeader(HTTPHeaders.ERROR_MESSAGE)));
+    }
+
+    @Test
+    void testNotifyMissingConvId() throws Exception {
+        final UserMessage refdMsg = new UserMessage();
+        refdMsg.setMessageId(UUID.randomUUID().toString());
+        
+        HolodeckB2BCore.getStorageManager().storeOutGoingMessageUnit(refdMsg);
+        
+        final Receipt receipt = new Receipt();
+        receipt.setPModeId("pm-test-notify");
+        receipt.setMessageId(UUID.randomUUID().toString());
+        receipt.setTimestamp(new Date());
+        receipt.setRefToMessageId(refdMsg.getMessageId());
+
+        NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
+        Map<String, String> settings = new HashMap<>();
+        settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");
+        settings.put(NotifyAndDeliverOperation.P_SIGNAL_CONVID, "true");
+
+        assertDoesNotThrow(() -> {
+            dm.init(settings);
+            dm.deliver(receipt);
+        });
+
+        assertTrue(backend.getRequestURL().getPath().endsWith("/notify/receipt"));
+
+        HTTPHeaders headers = backend.getRcvdHeaders();
+        assertNotNull(headers);
+        assertNull(headers.getHeader(HTTPHeaders.CONVERSATION_ID));
+    }
+
+    @Test
+    void testNotifyMissingRefdMsg() throws Exception {
+        final Receipt receipt = new Receipt();
+        receipt.setPModeId("pm-test-notify");
+        receipt.setMessageId(UUID.randomUUID().toString());
+        receipt.setTimestamp(new Date());
+        receipt.setRefToMessageId(UUID.randomUUID().toString());
+
+        NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
+        Map<String, String> settings = new HashMap<>();
+        settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");
+        settings.put(NotifyAndDeliverOperation.P_SIGNAL_CONVID, "true");
+
+        assertDoesNotThrow(() -> {
+            dm.init(settings);
+            dm.deliver(receipt);
+        });
+
+        assertTrue(backend.getRequestURL().getPath().endsWith("/notify/receipt"));
+
+        HTTPHeaders headers = backend.getRcvdHeaders();
+        assertNotNull(headers);
+        assertNull(headers.getHeader(HTTPHeaders.CONVERSATION_ID));
+    }
+    
+    @Test
+    void testRejectNoRef() throws Exception {
+        final ErrorMessage errMsg = new ErrorMessage();
+
+        errMsg.setPModeId("pm-test-notify");
+        errMsg.setMessageId(UUID.randomUUID().toString());
+        errMsg.setTimestamp(new Date());
+
+        NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
+        Map<String, String> settings = new HashMap<>();
+        settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/accept");
+        try {
+            dm.init(settings);
+            dm.deliver(errMsg);
+            fail();
+        } catch (MessageDeliveryException e) {
+        }
+    }
+
+    @Test
+    void testNotifyRejection() throws Exception {
+        final Receipt receipt = new Receipt();
+
+        receipt.setPModeId("pm-test-notify");
+        receipt.setMessageId(UUID.randomUUID().toString());
+        receipt.setTimestamp(new Date());
+        receipt.setRefToMessageId(UUID.randomUUID().toString());
+
+        NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
+        Map<String, String> settings = new HashMap<>();
+        settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/reject");
+        try {
+            dm.init(settings);
+            dm.deliver(receipt);
+            fail();
+        } catch (MessageDeliveryException e) {
+        }
+        assertTrue(backend.getRequestURL().getPath().endsWith("/notify/receipt"));
+    }
+
+    @Test
+    void testNotifyTimeout() throws Exception {
+        final Receipt receipt = new Receipt();
+
+        receipt.setPModeId("pm-test-notify");
+        receipt.setMessageId(UUID.randomUUID().toString());
+        receipt.setTimestamp(new Date());
+        receipt.setRefToMessageId(UUID.randomUUID().toString());
+
+        NotifyAndDeliverOperation dm = new NotifyAndDeliverOperation();
+        Map<String, String> settings = new HashMap<>();
+        settings.put(NotifyAndDeliverOperation.P_BACKEND_URL, "http://localhost:" + backend.getPort() + "/timeout");
+        settings.put(NotifyAndDeliverOperation.P_TIMEOUT, "800");
+        try {
+            dm.init(settings);
+            dm.deliver(receipt);
+            fail();
+        } catch (MessageDeliveryException e) {
+        }
+        assertTrue(backend.getRequestURL().getPath().endsWith("/notify/receipt"));
+    }
+
 }

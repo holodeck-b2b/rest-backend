@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.1.0
+##### 2024-02-22 
+### Added
+* Option to add ConversationId of referenced User Message in Notify operation 
+
 ## 2.0.0
 ##### 2023-03-08 
 ### Added
