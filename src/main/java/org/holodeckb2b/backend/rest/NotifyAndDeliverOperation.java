@@ -16,8 +16,8 @@
  */
 package org.holodeckb2b.backend.rest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,7 +41,7 @@ import org.holodeckb2b.interfaces.messagemodel.IPayload;
 import org.holodeckb2b.interfaces.messagemodel.IReceipt;
 import org.holodeckb2b.interfaces.messagemodel.ISignalMessage;
 import org.holodeckb2b.interfaces.messagemodel.IUserMessage;
-import org.holodeckb2b.interfaces.persistency.PersistenceException;
+import org.holodeckb2b.interfaces.storage.providers.StorageException;
 
 /**
  * Is a Holodeck B2B <i>delivery method</i> that implements a REST client for the delivery and notification of message
@@ -58,13 +58,13 @@ import org.holodeckb2b.interfaces.persistency.PersistenceException;
  * of <i>Receipt</i> respectively </i>Error</i> Signals.</li>
  * <li><b>TIMEOUT</b> [OPTIONAL] : the time (in milliseconds) the delivery method should wait for the back-end system to
  * accept the delivery and notification.</li>
- * <li><b>SIGNAL_WITH_CONVID</b> [OPTIONAL]: boolean value that indicates whether the <i>ConversationId</i> of the User 
+ * <li><b>SIGNAL_WITH_CONVID</b> [OPTIONAL]: boolean value that indicates whether the <i>ConversationId</i> of the User
  * Message referenced by the Signal Message should be included in the notification to the back-end system. Default value
  * is <i>false</i>.</li></ol>
  * <p>
  * The back-end MUST respond only with an HTTP status code and use a code in the 2xx range to indicate that it accepted
  * the delivery or notification. Any order code is interpreted as failure and reported as such to the Holodeck B2B Core.
- * 
+ *
  * @author Sander Fieten (sander at holodeck-b2b.org)
  */
 public class NotifyAndDeliverOperation implements IDeliveryMethod {
@@ -82,7 +82,7 @@ public class NotifyAndDeliverOperation implements IDeliveryMethod {
 	 * Name of the parameter that contains the indicator if the ConversationId should be included in Notifications
 	 */
 	public static final String P_SIGNAL_CONVID = "SIGNAL_WITH_CONVID";
-	
+
 	/**
 	 * The default timeout is 10 seconds
 	 */
@@ -123,7 +123,7 @@ public class NotifyAndDeliverOperation implements IDeliveryMethod {
 			timeout = DEFAULT_TIMEOUT;
 		}
                 signalWithConvId = Utils.isTrue((String) settings.get(P_SIGNAL_CONVID));
-                
+
 		log.info("Initialised REST delivery method.\n\tBase URL     = {}\n\tTimeout      = {}\n\tNotify ConvId= {}",
                          baseURL, timeout, signalWithConvId);
 	}
@@ -137,7 +137,7 @@ public class NotifyAndDeliverOperation implements IDeliveryMethod {
 	}
 
 	private void deliverUserMessage(IUserMessage userMsg) throws MessageDeliveryException {
-		final Collection<IPayload> payloads = userMsg.getPayloads();
+		final Collection<? extends IPayload> payloads = userMsg.getPayloads();
 		if (payloads != null && payloads.size() > 1) {
 			log.fatal("User Message [msgId={}] cannot be delivered because it contains more than 1 payload!",
 					userMsg.getMessageId());
@@ -186,8 +186,8 @@ public class NotifyAndDeliverOperation implements IDeliveryMethod {
 
 			if (payload != null) {
 				log.debug("Adding payload as HTTP entity body");
-				try (FileInputStream fis = new FileInputStream(payload.getContentLocation())) {
-					Streams.copy(fis, con.getOutputStream(), true);
+				try (InputStream is = payload.getContent()) {
+					Streams.copy(is, con.getOutputStream(), true);
 				}
 			} else {
 				log.debug("User Message does not have payload, send empty entity body");
@@ -224,10 +224,10 @@ public class NotifyAndDeliverOperation implements IDeliveryMethod {
 		headers.setHeader(HTTPHeaders.MESSAGE_ID, signal.getMessageId());
 		headers.setHeader(HTTPHeaders.TIMESTAMP, Utils.toXMLDateTime(signal.getTimestamp()));
         	final String refToMessageId = signal.getRefToMessageId();
-		if (!Utils.isNullOrEmpty(refToMessageId)) { 
+		if (!Utils.isNullOrEmpty(refToMessageId)) {
                     headers.setHeader(HTTPHeaders.REF_TO_MESSAGE_ID, refToMessageId);
                     if (signalWithConvId) {
-                        // For more consistent referencing of the User Message the ConversationId should be included  
+                        // For more consistent referencing of the User Message the ConversationId should be included
                         try {
                             final String convId = HolodeckB2BCoreInterface.getQueryManager()
                                                     .getMessageUnitsWithId(refToMessageId, Direction.OUT).stream()
@@ -237,9 +237,9 @@ public class NotifyAndDeliverOperation implements IDeliveryMethod {
                                                     .map(um -> ((IUserMessage) um).getCollaborationInfo().getConversationId())
                                                     .findFirst().orElse(null);
                                 headers.setHeader(HTTPHeaders.CONVERSATION_ID, convId);
-                        } catch (PersistenceException pse) {
+                        } catch (StorageException se) {
                                 log.error("Error retrieving ConversationId of refd UserMessage (msgID={}) : {}", refToMessageId,
-                                                   pse.getMessage());
+                                                   se.getMessage());
                         }
                     }
 		}

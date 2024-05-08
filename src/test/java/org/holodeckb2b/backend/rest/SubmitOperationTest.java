@@ -8,12 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,17 +49,18 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class SubmitOperationTest {
-	
+
 	static HolodeckB2BTestCore	testCore;
-	
+
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		final Path hb2bHome = TestUtils.getTestResource("hb2b-home");
-		if (Files.exists(hb2bHome))
-				FileUtils.removeDirectory(hb2bHome);		
-		Files.createDirectories(hb2bHome);
-		
-		testCore = new HolodeckB2BTestCore(hb2bHome.toString());
+//		final Path hb2bHome = TestUtils.getTestResource("hb2b-home");
+//		if (Files.exists(hb2bHome))
+//				FileUtils.removeDirectory(hb2bHome);
+//		Files.createDirectories(hb2bHome);
+
+//		testCore = new HolodeckB2BTestCore(hb2bHome.toString());
+		testCore = new HolodeckB2BTestCore();
 		HolodeckB2BCoreInterface.setImplementation(testCore);
 	}
 
@@ -69,35 +68,35 @@ class SubmitOperationTest {
 	void clearSubmissions() {
 		((TestMessageSubmitter) testCore.getMessageSubmitter()).clear();
 	}
-	
+
 	@ParameterizedTest
 	@ValueSource(strings = { "test.xml", "logo.png", "random.bin" })
 	void testPayloadSave(String payloadFile) {
 		final String pmodeId = "pm-test-rest";
 
-		final String submittedPayload = TestUtils.getTestResource("payloads/").resolve(payloadFile).toString();
+		final Path submittedPayload = TestUtils.getTestResource("payloads/").resolve(payloadFile);
 		String mimeType;
 		try {
-			mimeType = FileUtils.detectMimeType(new File(submittedPayload));
+			mimeType = FileUtils.detectMimeType(submittedPayload.toFile());
 		} catch (IOException e1) {
-			mimeType = "application/octet-stream";			
+			mimeType = "application/octet-stream";
 		}
-		
+
 		final HashMap<String, String> headers = new HashMap<>();
-		headers.put(HTTPHeaders.PMODE_ID, pmodeId);		
+		headers.put(HTTPHeaders.PMODE_ID, pmodeId);
 		headers.put(HTTPHeaders.MIME_TYPE, mimeType);
-		
+
 		MessageContext msgCtx = new MessageContext();
 		msgCtx.setProperty(MessageContext.TRANSPORT_HEADERS, headers);
-		
-		try (FileInputStream fis = new FileInputStream(submittedPayload)) {
+
+		try (FileInputStream fis = new FileInputStream(submittedPayload.toFile())) {
 			msgCtx.setEnvelope((SOAPEnvelope) new NOPMessageBuilder().processDocument(fis, mimeType, msgCtx));
-			new SubmitOperation().invokeBusinessLogic(msgCtx);			
+			new SubmitOperation().invokeBusinessLogic(msgCtx);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}
-		
+
 		final Collection<IMessageUnit> submissions = ((TestMessageSubmitter) testCore.getMessageSubmitter()).getAllSubmitted();
 		assertEquals(1, submissions.size());
 		final IMessageUnit submitted = submissions.iterator().next();
@@ -107,14 +106,11 @@ class SubmitOperationTest {
 		assertEquals(1, usrMsg.getPayloads().size());
 		final IPayload payload = usrMsg.getPayloads().iterator().next();
 		assertEquals(Containment.ATTACHMENT, payload.getContainment());
-		assertEquals(mimeType, payload.getMimeType());		
-		assertNotNull(payload.getContentLocation());
-		final Path saved = Paths.get(payload.getContentLocation());
-		assertTrue(Files.exists(saved));
-		
+		assertEquals(mimeType, payload.getMimeType());
+
 		boolean equal = false;
-		try (FileInputStream org = new FileInputStream(submittedPayload); 
-			 FileInputStream sav = new FileInputStream(saved.toFile())) {
+		try (FileInputStream org = new FileInputStream(submittedPayload.toFile());
+			 InputStream sav = payload.getContent()) {
 			int o, s;
 			do {
 				o = org.read(); s = sav.read();
@@ -125,74 +121,74 @@ class SubmitOperationTest {
 			fail();
 		}
 		assertTrue(equal);
-		
+
 		assertNull(payload.getPayloadURI());
 		assertTrue(Utils.isNullOrEmpty(payload.getProperties()));
 		assertNull(payload.getSchemaReference());
 	}
 
 	@Test
-	void testNoPModeId() {	
-		final HashMap<String, String> headers = new HashMap<>();		
+	void testNoPModeId() {
+		final HashMap<String, String> headers = new HashMap<>();
 		MessageContext msgCtx = new MessageContext();
 		msgCtx.setProperty(MessageContext.TRANSPORT_HEADERS, headers);
-		
+
 		AxisFault af = assertThrows(AxisFault.class, () -> new SubmitOperation().invokeBusinessLogic(msgCtx));
 		assertTrue(af.getMessage().contains("PMode"));
 		assertEquals(SOAP12Constants.QNAME_SENDER_FAULTCODE, af.getFaultCode());
 	}
-	
+
 	@Test
-	void testStreamClosure() {	
+	void testStreamClosure() {
 		final String pmodeId = "pm-test-rest";
 
 		final String submittedPayload = TestUtils.getTestResource("payloads/test.xml").toString();
-		final String mimeType = "application/xml";			
-		
+		final String mimeType = "application/xml";
+
 		final HashMap<String, String> headers = new HashMap<>();
-		headers.put(HTTPHeaders.PMODE_ID, pmodeId);		
+		headers.put(HTTPHeaders.PMODE_ID, pmodeId);
 		headers.put(HTTPHeaders.MIME_TYPE, mimeType);
-		
+
 		MessageContext msgCtx = new MessageContext();
 		msgCtx.setProperty(MessageContext.TRANSPORT_HEADERS, headers);
-		
+
 		try (FileInputStream fis = new FileInputStream(submittedPayload)) {
 			msgCtx.setEnvelope((SOAPEnvelope) new NOPMessageBuilder().processDocument(fis, mimeType, msgCtx));
 			fis.close();
 			AxisFault af = assertThrows(AxisFault.class, () -> new SubmitOperation().invokeBusinessLogic(msgCtx));
-			assertEquals(SOAP12Constants.QNAME_RECEIVER_FAULTCODE, af.getFaultCode());
+			assertEquals(SOAP12Constants.QNAME_SENDER_FAULTCODE, af.getFaultCode());
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
-	
+
 	@Test
 	void testFullSet() {
-		final String pmodeId = "pm-test-rest";		
-		
+		final String pmodeId = "pm-test-rest";
+
 		final String msgId = UUID.randomUUID().toString();
 		final Date   timestamp = new Date();
 		final String refToMsgId = UUID.randomUUID().toString();
-		
+
 		final PartyId senderId = new PartyId("senderId", "urn:org:holodeckb2b:test:partyids");
-		final String senderRole = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator";		
+		final String senderRole = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator";
 		final PartyId receiverId = new PartyId("urn:org:holodeckb2b:test:partyids:receiverId", null);
 		final String receiverRole = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
-		
+
 		final String conversationId = "pm-test-conversation";
 		final Service service = new Service("Test", "urn:org:holodeckb2b:test");
 		final String action = "SendMessage";
-		
+
 		final Collection<IProperty> msgProps = Arrays.asList(new Property[] { new Property("mp1", "val1"),
-																			  new Property("mp2", "val2", "t1")																				
+																			  new Property("mp2", "val2", "t1")
 																			});
-		
+
 		final String plData = TestUtils.getTestResource("payloads/test.xml").toString();
-		final String plMimeType = "application/xml";		
+		final String plMimeType = "application/xml";
 		final Containment plContainment = Containment.ATTACHMENT;
-		final String plCid = MessageIdUtils.createContentId(msgId);		
-		
+		final String plCid = MessageIdUtils.createContentId(msgId);
+
 		final String plSchemLoc = "http://test.holodeck-b2b.org/test.xsd";
 		final String plSchemaVersion = "1.0";
 		final String plSchemaNS = "http://test.holodeck-b2b.org/test";
@@ -224,7 +220,7 @@ class SubmitOperationTest {
 
 		MessageContext msgCtx = new MessageContext();
 		msgCtx.setProperty(MessageContext.TRANSPORT_HEADERS, headers.getAllHeaders());
-		
+
 		try (FileInputStream fis = new FileInputStream(plData)) {
 			msgCtx.setEnvelope((SOAPEnvelope) new NOPMessageBuilder().processDocument(fis, plMimeType, msgCtx));
 			new SubmitOperation().invokeBusinessLogic(msgCtx);
@@ -232,32 +228,32 @@ class SubmitOperationTest {
 			e.printStackTrace();
 			fail();
 		}
-	
+
 		final Collection<IMessageUnit> submissions = ((TestMessageSubmitter) testCore.getMessageSubmitter()).getAllSubmitted();
 		assertEquals(1, submissions.size());
 		final IMessageUnit submitted = submissions.iterator().next();
 		assertEquals(pmodeId, submitted.getPModeId());
 		assertEquals(timestamp, submitted.getTimestamp());
 		assertEquals(refToMsgId, submitted.getRefToMessageId());
-		
-		assertTrue(submitted instanceof IUserMessage);		
+
+		assertTrue(submitted instanceof IUserMessage);
 		final IUserMessage usrMsg = (IUserMessage) submitted;
-		
+
 		assertTrue(CompareUtils.areEqual(Collections.singletonList(senderId), usrMsg.getSender().getPartyIds()));
 		assertEquals(senderRole, usrMsg.getSender().getRole());
 		assertTrue(CompareUtils.areEqual(Collections.singletonList(receiverId), usrMsg.getReceiver().getPartyIds()));
 		assertEquals(receiverRole, usrMsg.getReceiver().getRole());
-		
+
 		final ICollaborationInfo ci = usrMsg.getCollaborationInfo();
 		assertNotNull(ci);
 		assertEquals(conversationId, ci.getConversationId());
 		assertTrue(CompareUtils.areEqual(service, ci.getService()));
 		assertEquals(action, ci.getAction());
-				
+
 		assertFalse(Utils.isNullOrEmpty(usrMsg.getMessageProperties()));
 		assertTrue(msgProps.stream().allMatch(o -> usrMsg.getMessageProperties().parallelStream()
 														 				.anyMatch(s -> CompareUtils.areEqual(o, s))));
-				
+
 		assertEquals(1, usrMsg.getPayloads().size());
 		final IPayload payload = usrMsg.getPayloads().iterator().next();
 		assertEquals(plContainment, payload.getContainment());
